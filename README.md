@@ -44,7 +44,7 @@ You can then quickly access any project in the ```vpm``` hash by doing the follo
 
 ```vpm open SampleProject``` will immediately open that directory in Finder
 
-```vpm project SampleProject``` will attempt to look for either an Xcode or Sublime in the root directory of SampleProject and open it
+```vpm project SampleProject``` will attempt to look for either an Xcode or Sublime in the root directory of ```SampleProject``` and open it
 
 With this set up you can hash multiple projects into ```vpm``` and quickly access all of them. When the list of projects gets long, you can do ```vpm list``` to see the existing projects in the hash and simply access each of them by their index. For example, if ```SampleProject``` is the 6th project on the list, you can do ```vpm open 6``` to open it in Finder.
 
