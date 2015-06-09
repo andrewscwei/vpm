@@ -6,6 +6,14 @@ A wonderful Bash script that helps manage local files, particularly code project
 
 - quick access to hashed projects
 
+## Install
+
+Copy the `vpm` to `/usr/local/bin`, and add the following to your `.profile`:
+
+```
+alias vpm=". vpm"
+```
+
 ## Commands
 
 ```vpm add <project_alias>```: Maps the current working directory to a project alias.
