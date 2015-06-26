@@ -261,7 +261,7 @@ function vpm_show_commands
     echo -e "${COLOR_CYAN}    list${COLOR_RESET} - Lists all current projects managed by vpm."
     echo -e "${COLOR_CYAN}  manage${COLOR_RESET} - Edits the vpm repository file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
     echo -e "${COLOR_CYAN}    open${COLOR_RESET} - Opens the working directory of a vpm project in Finder."
-    echo -e "${COLOR_CYAN} project${COLOR_RESET} - Opens a vpm project in designated IDE (supports Xcode/Sublime in respective priority)."
+    echo -e "${COLOR_CYAN} project${COLOR_RESET} - Opens a vpm project in designated IDE (supports Xcode/Sublime/Atom in respective priority)."
     echo -e "${COLOR_CYAN}  remove${COLOR_RESET} - Removes a vpm project from the vpm repository."
     echo -e "${COLOR_CYAN}    subl${COLOR_RESET} - Opens a vpm project in Sublime (if applicable)."
     echo -e "${COLOR_CYAN}   xcode${COLOR_RESET} - Opens a vpm project in Xcode (if applicable)."
@@ -333,6 +333,11 @@ function vpm_help
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}xcode <project_alias_or_index>${COLOR_RESET}"
         echo
         echo -e "Opens a vpm project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} in Xcode. Command is ignored if no project files associated with Xcode are found in the project's working directory."
+
+    elif [ "$1" == "atom" ]; then
+        echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}atom <project_alias_or_index>${COLOR_RESET}"
+        echo
+        echo -e "Opens a vpm project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} in Atom."
 
     else
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_RESET}No help data available regarding ${COLOR_RED}$1${COLOR_RESET} at this point"
@@ -651,6 +656,8 @@ function vpm_project
             vpm_help "subl"
         elif [ "$1" == "xcodeproj" ]; then
             vpm_help "xcode"
+        elif [ "$1" == "atom" ]; then
+            vpm_help "atom"
         else
             vpm_help "project"
         fi
@@ -685,7 +692,12 @@ function vpm_project
             fi
         done
 
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}No project found for ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}"
+        if hash atom 2>/dev/null; then
+            atom $VPM_TMP_PROJECT_PATH
+        else
+            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}No project found for ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}"
+        fi
+
         return
     fi
 
@@ -709,5 +721,6 @@ elif [ "$1" == "remove" ] || [ "$1" == "rm" ] || [ "$1" == "-r" ];    then vpm_r
 elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "-p" ]; then vpm_project "auto" $2
 elif [ "$1" == "subl" ];                                              then vpm_project "sublime-project" $2
 elif [ "$1" == "xcode" ];                                             then vpm_project "xcodeproj" $2
+elif [ "$1" == "atom" ];                                              then vpm_project "atom" $2
 else                                                                       echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
 fi
