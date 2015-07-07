@@ -1,6 +1,6 @@
 # VARS Project Manager (vpm)
 
-A wonderful shell script that helps manage local projects.
+A wonderful CLI tool that helps manage local projects.
 
 ## Features
 
