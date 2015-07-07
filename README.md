@@ -4,7 +4,10 @@ A wonderful CLI tool that helps manage local projects.
 
 ## Features
 
-- quick access to hashed projects
+You can:
+- hash the current working directory to ```vpm``` and give it a key (i.e. the project name ```example-project```)
+- quickly ```cd``` into any hashed directories in ```vpm``` by using the key you previously provided
+- quickly open a project using either Sublime/Xcode/Atom (it scans for Sublime/Xcode project files first then falls back to Atom) as long as the project directory is hashed in ```vpm```
 
 ## Commands
 
@@ -47,6 +50,10 @@ You can then quickly access any project in the ```vpm``` hash by doing the follo
 ```vpm project SampleProject``` will attempt to look for either an Xcode or Sublime in the root directory of ```SampleProject``` and open it
 
 With this set up you can hash multiple projects into ```vpm``` and quickly access all of them. When the list of projects gets long, you can do ```vpm list``` to see the existing projects in the hash and simply access each of them by their index. For example, if ```SampleProject``` is the 6th project on the list, you can do ```vpm open 6``` to open it in Finder.
+
+Most commands have equivalent short notations. For example, instead of doing ```vpm project``` you can do ```vpm p```.
+
+If you previously executed a command on a valid key, it stays in cache. You can then access it using ```.```. i.e. ```vpm p .```.  To view which key is cached, do ```vpm cache```.
 
 ## License
 
