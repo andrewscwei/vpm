@@ -635,40 +635,58 @@ function vpm_remove
 function vpm_project
 {
     # Help.
-    if [ "$2" == "-h" ]; then
+    if [ "$1" == "-h" ]; then
         vpm_help "project"
 
         return
     fi
 
     # If arg is blank, return.
-    if [ "$2" == "" ]; then
+    if [ "$1" == "" ]; then
         echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project alias/index must be specified"
         return
     fi
 
-    VPM_GET_PROJECT_PAIR $2
+    VPM_GET_PROJECT_PAIR $1
 
     if [ "$VPM_TMP_PROJECT_ALIAS" != "" ]; then
-        for file in "$VPM_TMP_PROJECT_PATH"/*
-        do
-            if [ "$1" == "auto" ]; then
-                if [[ "$file" == *"xcodeproj" ]] || [[ "$file" == *"sublime-project" ]]; then
-                    VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
-                    open "$file"
-                    echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Opened project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}"
-                    return
-                fi
+        TARGET_PROJECT_FILE=""
 
-            elif [[ "$file" == *"$1" ]]; then
-                VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
-                open "$file"
-                echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Opened project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}"
-                return
+        for file in "$VPM_TMP_PROJECT_PATH"/*; do
+            # If *.xcworkspace file is found, use it immediately.
+            if [[ "$file" == *"xcworkspace" ]]; then
+                TARGET_PROJECT_FILE="$file"
+                break
+            # If *.xcodeproj is found, store it temporarily until another project file with
+            # higher priority is found.
+            elif [[ "$file" == *"xcodeproj" ]]; then
+                if [[ "$TARGET_PROJECT_FILE" != *"xcworkspace" ]]; then
+                    TARGET_PROJECT_FILE="$file"
+                fi
+            # If *.sublime-project is found, store it temporarily until another project file
+            # with higher priority is found.
+            elif [[ "$file" == *"sublime-project" ]]; then
+                if [[ "$TARGET_PROJECT_FILE" != *"xcworkspace" ]] && [[ "$TARGET_PROJECT_FILE" != *"xcodeproj" ]]; then
+                    TARGET_PROJECT_FILE="$file"
+                fi
             fi
         done
 
-        if hash atom 2>/dev/null; then
+        if [[ "$TARGET_PROJECT_FILE" != "" ]]; then
+            VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
+
+            if [[ "$TARGET_PROJECT_FILE" == *"xcworkspace" ]]; then
+                echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Found Xcode workspace, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} with ${COLOR_CYAN}Xcode${COLOR_RESET}"
+            elif [[ "$TARGET_PROJECT_FILE" == *"xcodeproj" ]]; then
+                echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Found Xcode project, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} with ${COLOR_CYAN}Xcode${COLOR_RESET}"
+            elif [[ "$TARGET_PROJECT_FILE" == *"sublime-project" ]]; then
+                echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Found Sublime project, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} with ${COLOR_CYAN}Sublime${COLOR_RESET}"
+            fi
+
+            open "$TARGET_PROJECT_FILE"
+        elif hash atom 2>/dev/null; then
+            VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
+            echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}No unique project files found, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} with ${COLOR_CYAN}Atom${COLOR_RESET}"
             atom "$VPM_TMP_PROJECT_PATH"
         else
             echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}No project found for ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}"
@@ -694,7 +712,7 @@ elif [ "$1" == "list" ] || [ "$1" == "ls" ] || [ "$1" == "l" ] || [ "$1" == "-l"
 elif [ "$1" == "manage" ] || [ "$1" == "m" ] || [ "$1" == "-m" ];                        then vpm_manage $2
 elif [ "$1" == "open" ] || [ "$1" == "o" ] || [ "$1" == "-o" ];                          then vpm_open $2
 elif [ "$1" == "remove" ] || [ "$1" == "rm" ] || [ "$1" == "r" ] || [ "$1" == "-r" ];    then vpm_remove $2
-elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "p" ] || [ "$1" == "-p" ]; then vpm_project "auto" $2
-elif [ "$1" == "version" ] || [ "$1" == "v" ] || [ "$1" == "-v" ];                        then echo -e "0.3.0"
+elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "p" ] || [ "$1" == "-p" ]; then vpm_project $2
+elif [ "$1" == "version" ] || [ "$1" == "v" ] || [ "$1" == "-v" ];                       then echo -e "0.6.0"
 else                                                                                     echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
 fi
