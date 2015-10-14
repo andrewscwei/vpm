@@ -684,12 +684,16 @@ function vpm_project
             fi
 
             open "$TARGET_PROJECT_FILE"
+        elif hash subl 2>/dev/null; then
+            VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
+            echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}No unique project files found, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} with ${COLOR_CYAN}Sublime${COLOR_RESET}"
+            subl "$VPM_TMP_PROJECT_PATH"
         elif hash atom 2>/dev/null; then
             VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
             echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}No unique project files found, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} with ${COLOR_CYAN}Atom${COLOR_RESET}"
             atom "$VPM_TMP_PROJECT_PATH"
         else
-            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}No project found for ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}No project found for ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} and there is no supported text editor installed to open the directory"
         fi
 
         return
