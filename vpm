@@ -105,15 +105,14 @@ function VPM_DECODE_PROJECT_PAIR
 function VPM_GET_PROJECT_PAIR
 {
     if [ "$1" == "" ]; then
-        VPM_TMP_PROJECT_ALIAS=""
-        VPM_TMP_PROJECT_PATH=""
+        VPM_GET_CACHE
+        VPM_GET_PROJECT_PAIR_BY_ALIAS $VPM_PROJECT_CACHE
         return
     fi
 
     # . means get the project alias from cache.
     if [ "$1" == "." ]; then
-        VPM_GET_CACHE
-        VPM_GET_PROJECT_PAIR_BY_ALIAS $VPM_PROJECT_CACHE
+        VPM_GET_PROJECT_PAIR_BY_PATH `pwd`
         return
     fi
 
@@ -174,6 +173,34 @@ function VPM_GET_PROJECT_PAIR_BY_INDEX
             VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$[i-1]]}"
 
             if (( $i == $1 )); then
+                return
+            fi
+        done
+    fi
+
+    VPM_TMP_PROJECT_ALIAS=""
+    VPM_TMP_PROJECT_PATH=""
+}
+
+#
+# @global
+# 
+# Looks up the vpm repo by path and stores the matching
+# project pair globally.
+# 
+# @param $1 Project path
+# 
+function VPM_GET_PROJECT_PAIR_BY_PATH
+{
+    if [ "$1" != "" ]; then
+        VPM_SERIALIZE_REPOSITORY
+
+        # Iterate through the list of projects.
+        for (( i=1; i<=$VPM_PROJECT_LENGTH; i++ ))
+        do
+            VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$[i-1]]}"
+
+            if [ "$VPM_TMP_PROJECT_PATH" == "$1" ]; then
                 return
             fi
         done
@@ -414,7 +441,7 @@ function vpm_cd
         return
     fi
 
-    if [ "$1" == "" ]; then
+    if [ "$1" == "-r" ]; then
         cd $PATH_VPM_ROOT
         return
     fi
@@ -541,7 +568,7 @@ function vpm_open
     fi
 
     # If arg is blank, open root directory of vpm.
-    if [ "$1" == "" ]; then
+    if [ "$1" == "-r" ]; then
         open $PATH_VPM_ROOT
         echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Opened root in Finder"
         return
@@ -638,12 +665,6 @@ function vpm_project
     if [ "$1" == "-h" ]; then
         vpm_help "project"
 
-        return
-    fi
-
-    # If arg is blank, return.
-    if [ "$1" == "" ]; then
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project alias/index must be specified"
         return
     fi
 
