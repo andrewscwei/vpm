@@ -33,7 +33,7 @@ See `vpm help` or simply `vpm` for a full list of commands with details.
 
 Clone this repo and symlink to `/usr/local/bin` (you may need `sudo` access)
 ```
-git clone https://github.com/variante/vpm.git
+git clone https://github.com/andrewscwei/vpm.git
 sudo ln -s /path/to/vpm /usr/local/bin
 ```
 Create an alias in your local `.bash_profile` or equivalent so `vpm` can directly execute commands like `cd`
