@@ -112,7 +112,7 @@ function VPM_GET_PROJECT_PAIR
 
     # . means get the project alias from cache.
     if [ "$1" == "." ]; then
-        VPM_GET_PROJECT_PAIR_BY_PATH `pwd`
+        VPM_GET_PROJECT_PAIR_BY_PATH "$(pwd)"
         return
     fi
 
