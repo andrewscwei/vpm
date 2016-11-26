@@ -502,11 +502,23 @@ function vpm_edit
     if [ "$1" == "-h" ]; then
         vpm_help "edit"
     elif [ "$1" == "hosts" ]; then
-        nano "$PATH_HOSTS"
+        if hash subl 2>/dev/null; then
+            subl "$PATH_HOSTS"
+        else
+            nano "$PATH_HOSTS"
+        fi
     elif [ "$1" == "vhosts" ]; then
-        nano "$PATH_VHOSTS"
+        if hash subl 2>/dev/null; then
+            subl "$PATH_VHOSTS"
+        else
+            nano "$PATH_VHOSTS"
+        fi
     else
-        nano $PATH_VPM_ROOT"/vpm"
+        if hash subl 2>/dev/null; then
+            subl $PATH_VPM_ROOT"/vpm"
+        else
+            nano $PATH_VPM_ROOT"/vpm"
+        fi
     fi
 }
 
@@ -549,7 +561,11 @@ function vpm_manage
     if [ "$1" == "-h" ]; then
         vpm_help "manage"
     else
-        nano "$PATH_REPOSITORY"
+        if hash subl 2>/dev/null; then
+            subl "$PATH_REPOSITORY"
+        else
+            nano "$PATH_REPOSITORY"
+        fi
     fi
 }
 
