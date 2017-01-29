@@ -184,12 +184,12 @@ function VPM_GET_PROJECT_PAIR_BY_INDEX
 
 #
 # @global
-# 
+#
 # Looks up the vpm repo by path and stores the matching
 # project pair globally.
-# 
+#
 # @param $1 Project path
-# 
+#
 function VPM_GET_PROJECT_PAIR_BY_PATH
 {
     if [ "$1" != "" ]; then
@@ -247,6 +247,28 @@ function VPM_SET_CACHE
     done
 
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Problem writing cache"
+}
+
+#
+# Opens the provided path in the preferred editor.
+#
+function VPM_EDIT
+{
+    if [ "$1" == "" ]; then return; fi
+
+    if hash code 2>/dev/null; then
+        code "$1"
+    elif hash subl 2>/dev/null; then
+        subl "$1"
+    elif hash atom 2>/dev/null; then
+        atom "$1"
+    elif hash vim 2>/dev/null; then
+        vim "$1"
+    elif hash emacs 2>/dev/null; then
+        emacs "$1"
+    else
+        nano "$1"
+    fi
 }
 
 #
@@ -502,23 +524,11 @@ function vpm_edit
     if [ "$1" == "-h" ]; then
         vpm_help "edit"
     elif [ "$1" == "hosts" ]; then
-        if hash subl 2>/dev/null; then
-            subl "$PATH_HOSTS"
-        else
-            nano "$PATH_HOSTS"
-        fi
+        VPM_EDIT "$PATH_HOSTS"
     elif [ "$1" == "vhosts" ]; then
-        if hash subl 2>/dev/null; then
-            subl "$PATH_VHOSTS"
-        else
-            nano "$PATH_VHOSTS"
-        fi
+        VPM_EDIT "$PATH_VHOSTS"
     else
-        if hash subl 2>/dev/null; then
-            subl $PATH_VPM_ROOT"/vpm"
-        else
-            nano $PATH_VPM_ROOT"/vpm"
-        fi
+        VPM_EDIT $PATH_VPM_ROOT"/vpm"
     fi
 }
 
@@ -561,11 +571,7 @@ function vpm_manage
     if [ "$1" == "-h" ]; then
         vpm_help "manage"
     else
-        if hash subl 2>/dev/null; then
-            subl "$PATH_REPOSITORY"
-        else
-            nano "$PATH_REPOSITORY"
-        fi
+        VPM_EDIT $PATH_REPOSITORY
     fi
 }
 
@@ -721,16 +727,10 @@ function vpm_project
             fi
 
             open "$TARGET_PROJECT_FILE"
-        elif hash subl 2>/dev/null; then
-            VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
-            echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}No unique project files found, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} with ${COLOR_CYAN}Sublime${COLOR_RESET}"
-            subl "$VPM_TMP_PROJECT_PATH"
-        elif hash atom 2>/dev/null; then
-            VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
-            echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}No unique project files found, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} with ${COLOR_CYAN}Atom${COLOR_RESET}"
-            atom "$VPM_TMP_PROJECT_PATH"
         else
-            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}No project found for ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} and there is no supported text editor installed to open the directory"
+            VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
+            echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}No unique project files found, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} in preferred editor"
+            VPM_EDIT "$VPM_TMP_PROJECT_PATH"
         fi
 
         return
