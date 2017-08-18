@@ -2,16 +2,16 @@
 
 A CLI tool that helps manage local projects.
 
-## Features
+## How It Works:
 
-You can:
-- hash the current working directory to `vpm` and give it a key/alias (i.e. the project name `example-project`)
-- quickly `cd` into any hashed projects in `vpm` by using the key you previously provided (i.e. `vpm cd example-project`)
-- quickly open a project using either Sublime/Xcode/Atom (it scans for Sublime/Xcode project files first then falls back to Sublime/Atom) as long as the project is hashed in `vpm`
+1. From Terminal, you `cd` to the directory of a project you are working on.
+2. Run `vpm add` to add the current directory to the `vpm` registry. The key is the name of the directory if there is no additional parameter specified, i.e. `foo`.
+
+From now on you can just run `vpm cd foo` to navigate to that project directly from Terminal! Better yet, you can run `vpm project foo` to immediate open it using either VSCode/Xcode/Sublime/Atom (it scans for VSCode/Xcode project files first then falls back to Sublime/Atom)!
 
 ## Commands
 
-`vpm add <project_alias>`: Maps the current working directory to a project alias.
+`vpm add <project_alias>`: Maps the current working directory to a project alias. If you don't specify a project alias, the name of the current working directory will be used.
 
 `vpm cd <project_alias_or_index>`: Changes the working directory to the working directory of a `vpm` project.
 
@@ -21,7 +21,7 @@ You can:
 
 `vpm project <project_alias_or_index` Opens a `vpm` project in designated IDE (supports Xcode/Sublime in respective priority).
 
-`vpm remove <project_alias_or_index>`: Removes a `vpm` project from the `vpm` repository.
+`vpm remove <project_alias_or_index>`: Removes a `vpm` project from the `vpm` repository. If you don't specify a project alias or index, the name of the current working directory will be used.
 
 `vpm <command>`: When no project alias or index is specified, the last iterated project will be used to perform the `<command`>. You can use `vpm cache` to see what the last iterated project is. Not all commands support this notation.
 

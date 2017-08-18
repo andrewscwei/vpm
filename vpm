@@ -62,7 +62,8 @@ function VPM_SERIALIZE_REPOSITORY
 # @global
 #
 # Parses a project entry in the form of "alias":"path" string pair and stores
-# the alias and the path into VPM_TMP_PROJECT_ALIAS and VPM_TMP_PROJECT_PATH respectively.
+# the alias and the path into VPM_TMP_PROJECT_ALIAS and VPM_TMP_PROJECT_PATH 
+# respectively.
 #
 # @param $1 The "alias":"path" string pair.
 #
@@ -97,8 +98,8 @@ function VPM_DECODE_PROJECT_PAIR
 #
 # @global
 #
-# Looks up the vpm repo by alias, index, or cache and stores the
-# matching project pair globally.
+# Looks up the vpm repo by alias, index, or cache and stores the matching 
+# project pair globally.
 #
 # @param $1 Project alias or index
 #
@@ -129,8 +130,7 @@ function VPM_GET_PROJECT_PAIR
 #
 # @global
 #
-# Looks up the vpm repo by alias and stores the matching
-# project pair globally.
+# Looks up the vpm repo by alias and stores the matching project pair globally.
 #
 # @param $1 Project alias
 #
@@ -157,8 +157,7 @@ function VPM_GET_PROJECT_PAIR_BY_ALIAS
 #
 # @global
 #
-# Looks up the vpm repo by index and stores the matching
-# project pair globally.
+# Looks up the vpm repo by index and stores the matching project pair globally.
 #
 # @param $1 Project index
 #
@@ -394,9 +393,11 @@ function vpm_cache
 }
 
 #
-# Adds to the vpm the current directory associated with the specified project alias.
+# Adds to the vpm the current directory associated with the specified project 
+# alias.
 #
-# @param $1 Alias of project.
+# @param $1 Alias of project. Leave blank or use "." to use the name of the
+#           current directory.
 #
 function vpm_add
 {
@@ -406,17 +407,16 @@ function vpm_add
         return
     fi
 
-    # Sanity checks.
-    if [ "$1" == "" ]; then
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Please specify project alias"
-        return
-    fi
-
     VPM_SERIALIZE_REPOSITORY
 
+    local alias="$1"
     local dir="`pwd`"
     local buffer=""
     local check=0
+
+    if [ "$alias" == "" ] || [ "$alias" == "." ]; then
+        alias="${PWD##*/}"
+    fi 
 
     # Iterate through the list of projects.
     for (( i=1; i<=$VPM_PROJECT_LENGTH; i++ ))
@@ -426,7 +426,7 @@ function vpm_add
         VPM_DECODE_PROJECT_PAIR "$pair"
 
         # If the specified project alias already exists...
-        if [ "$VPM_TMP_PROJECT_ALIAS" == "$1" ]; then
+        if [ "$VPM_TMP_PROJECT_ALIAS" == "$alias" ]; then
             check=1
             buffer="$buffer$VPM_TMP_PROJECT_ALIAS:${dir}\n"
         # Else just add the current line to the output buffer.
@@ -436,22 +436,22 @@ function vpm_add
     done
 
     if [ $check == 0 ]; then
-        buffer="$buffer$1:${dir}\n"
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Mapped ${COLOR_CYAN}$1 ${COLOR_RESET}to ${COLOR_CYAN}${dir}${COLOR_RESET}"
+        buffer="$buffer$alias:${dir}\n"
+        echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Mapped ${COLOR_CYAN}$alias ${COLOR_RESET}to ${COLOR_CYAN}${dir}${COLOR_RESET}"
     else
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Remapped ${COLOR_CYAN}$1${COLOR_RESET} to ${COLOR_CYAN}${dir}${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Remapped ${COLOR_CYAN}$alias${COLOR_RESET} to ${COLOR_CYAN}${dir}${COLOR_RESET}"
     fi
 
     echo -e $buffer > $PATH_REPOSITORY
 
     VPM_SERIALIZE_REPOSITORY
-    VPM_SET_CACHE $1
+    VPM_SET_CACHE $alias
 }
 
 #
-# Navigates to the root path of a project in Terminal. Either specify a
-# string representing the project alias or a number prefixed by '#'
-# representing the index.
+# Navigates to the root path of a project in Terminal. Either specify a string 
+# representing the project alias or a number prefixed by '#' representing the 
+# index.
 #
 # @param $1 Project alias or index (prefixed by '#')
 #
@@ -502,8 +502,8 @@ function vpm_clean
 
         VPM_DECODE_PROJECT_PAIR "$pair"
 
-        # Store entry in buffer if it is valid. If invalid it will not be recorded,
-        # thus 'cleaned'.
+        # Store entry in buffer if it is valid. If invalid it will not be 
+        # recorded, thus 'cleaned'.
         if [ "$pair" != "" ] && [ "$VPM_TMP_PROJECT_ALIAS" != "" ] && [ "$VPM_TMP_PROJECT_PATH" != "" ]; then
             buffer="$buffer$pair\n"
         else
@@ -576,8 +576,8 @@ function vpm_manage
 }
 
 #
-# Opens a project in Finder. Either specify a string representing
-# the project alias or a number representing the index.
+# Opens a project in Finder. Either specify a string representing the project 
+# alias or a number representing the index.
 #
 # @param $1 Project alias or index
 #
@@ -608,10 +608,11 @@ function vpm_open
 }
 
 #
-# Removes a project from vpm. Either specify a string representing
-# the project alias or a number representing the index.
+# Removes a project from vpm. Either specify a string representing the project 
+# alias or a number representing the index.
 #
-# @param $1 Project alias or index
+# @param $1 Project alias or index. Leave blank or specify "." to use the name
+#           of the current directory.
 #
 function vpm_remove
 {
@@ -621,12 +622,13 @@ function vpm_remove
         return
     fi
 
-    if [ "$1" == "" ]; then
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project alias/index must be specified"
-        return
-    fi
+    local alias="$1"
 
-    [[ $1 =~ ^-?[0-9]+$ ]] && use_idx=1 || use_idx=0
+    if [ "$alias" == "" ] || [ "$alias" == "." ]; then
+        alias="${PWD##*/}"
+    fi 
+
+    [[ $alias =~ ^-?[0-9]+$ ]] && use_idx=1 || use_idx=0
 
     VPM_SERIALIZE_REPOSITORY
 
@@ -642,14 +644,14 @@ function vpm_remove
         VPM_DECODE_PROJECT_PAIR "$pair"
 
         # If arg is a project index...
-        if (( $use_idx == 1 )) && (( $i == $1 )); then
+        if (( $use_idx == 1 )) && (( $i == $alias )); then
             skip=1
             removed=1
 
             echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Removed project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} at index ${COLOR_PURPLE}$i${COLOR_RESET}"
 
         # Else if arg is a project alias...
-        elif (( $use_idx == 0 )) && [ "$VPM_TMP_PROJECT_ALIAS" == "$1" ]; then
+        elif (( $use_idx == 0 )) && [ "$VPM_TMP_PROJECT_ALIAS" == "$alias" ]; then
             skip=1
             removed=1
 
@@ -665,9 +667,9 @@ function vpm_remove
     # If nothing was removed, throw error.
     if (( $removed == 0 )); then
         if (( $use_idx == 1 )); then
-            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Index ${COLOR_PURPLE}$1${COLOR_RESET} is out of bounds"
+            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Index ${COLOR_PURPLE}$alias${COLOR_RESET} is out of bounds"
         else
-            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project with alias ${COLOR_CYAN}$1${COLOR_RESET} not found"
+            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project with alias ${COLOR_CYAN}$alias${COLOR_RESET} not found"
         fi
     fi
 
@@ -675,8 +677,8 @@ function vpm_remove
 }
 
 #
-# Opens a project from vpm. Either specify a string representing
-# the project alias or a number representing the index.
+# Opens a project from vpm. Either specify a string representing the project 
+# alias or a number representing the index.
 #
 # @param $1 Project extension
 # @param $2 Project alias or index
@@ -700,14 +702,14 @@ function vpm_project
             if [[ "$file" == *"xcworkspace" ]]; then
                 TARGET_PROJECT_FILE="$file"
                 break
-            # If *.xcodeproj is found, store it temporarily until another project file with
-            # higher priority is found.
+            # If *.xcodeproj is found, store it temporarily until another 
+            # project file with higher priority is found.
             elif [[ "$file" == *"xcodeproj" ]]; then
                 if [[ "$TARGET_PROJECT_FILE" != *"xcworkspace" ]]; then
                     TARGET_PROJECT_FILE="$file"
                 fi
-            # If *.sublime-project is found, store it temporarily until another project file
-            # with higher priority is found.
+            # If *.sublime-project is found, store it temporarily until another 
+            # project file with higher priority is found.
             elif [[ "$file" == *"sublime-project" ]]; then
                 if [[ "$TARGET_PROJECT_FILE" != *"xcworkspace" ]] && [[ "$TARGET_PROJECT_FILE" != *"xcodeproj" ]]; then
                     TARGET_PROJECT_FILE="$file"
@@ -740,7 +742,7 @@ function vpm_project
 }
 
 #
-# Main thread.
+# Main process.
 #
 if   [ "$1" == "" ] || [ "$1" == "dir" ] || [ "$1" == "d" ] || [ "$1" == "-d" ];         then vpm_directory $2
 elif [ "$1" == "add" ] || [ "$1" == "a" ] || [ "$1" == "-a" ];                           then vpm_add $2
