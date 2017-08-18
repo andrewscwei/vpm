@@ -1,6 +1,8 @@
 # VARS Project Manager (vpm)
 
-A CLI tool that helps manage and open local projects quickly. No more manually navigating to or searching through your file system to find your project.
+Command line spotlight for managing local projects.
+
+`vpm` is a CLI tool that helps access local projects quickly. No more manually navigating to or searching through your file system to find your project.
 
 ## How It Works:
 
