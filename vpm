@@ -34,8 +34,8 @@ PATH_VHOSTS="/etc/apache2/extra/httpd-vhosts.conf"
 #
 # @global
 #
-# Serializes the repository into an array of project entries in the form of
-# "alias":"path" string pair. This operation stores the array of project entries
+# Serializes the registry into an array of project entries in the form of
+# "key":"path" string pair. This operation stores the array of project entries
 # into VPM_PROJECT_LIST and its length into VPM_PROJECT_LENGTH.
 #
 function VPM_SERIALIZE_REPOSITORY
@@ -61,11 +61,11 @@ function VPM_SERIALIZE_REPOSITORY
 #
 # @global
 #
-# Parses a project entry in the form of "alias":"path" string pair and stores
-# the alias and the path into VPM_TMP_PROJECT_ALIAS and VPM_TMP_PROJECT_PATH 
+# Parses a project entry in the form of "key":"path" string pair and stores
+# the key and the path into VPM_TMP_PROJECT_ALIAS and VPM_TMP_PROJECT_PATH 
 # respectively.
 #
-# @param $1 The "alias":"path" string pair.
+# @param $1 The "key":"path" string pair.
 #
 function VPM_DECODE_PROJECT_PAIR
 {
@@ -76,7 +76,7 @@ function VPM_DECODE_PROJECT_PAIR
     OIFS=$IFS
     IFS=":"
 
-    # Grab the alias from the "alias":"path" string pair.
+    # Grab the key from the "key":"path" string pair.
     local a=($1)
     local n=${a[0]}
     local p=${a[1]}
@@ -90,7 +90,7 @@ function VPM_DECODE_PROJECT_PAIR
     p=${p//\"/}
     p=${p//\'/}
 
-    # Store the alias and path globally.
+    # Store the key and path globally.
     VPM_TMP_PROJECT_ALIAS="$n"
     VPM_TMP_PROJECT_PATH="$p"
 }
@@ -98,10 +98,10 @@ function VPM_DECODE_PROJECT_PAIR
 #
 # @global
 #
-# Looks up the vpm repo by alias, index, or cache and stores the matching 
+# Looks up the vpm repo by key, index, or cache and stores the matching 
 # project pair globally.
 #
-# @param $1 Project alias or index
+# @param $1 Project key or index
 #
 function VPM_GET_PROJECT_PAIR
 {
@@ -111,13 +111,13 @@ function VPM_GET_PROJECT_PAIR
         return
     fi
 
-    # . means get the project alias from cache.
+    # . means get the project key from cache.
     if [ "$1" == "." ]; then
         VPM_GET_PROJECT_PAIR_BY_PATH "$(pwd)"
         return
     fi
 
-    # Check if getting project pair by alias or index.
+    # Check if getting project pair by key or index.
     [[ $1 =~ ^-?[0-9]+$ ]] && use_idx=1 || use_idx=0
 
     if (( $use_idx == 1 )); then
@@ -130,9 +130,9 @@ function VPM_GET_PROJECT_PAIR
 #
 # @global
 #
-# Looks up the vpm repo by alias and stores the matching project pair globally.
+# Looks up the vpm repo by key and stores the matching project pair globally.
 #
-# @param $1 Project alias
+# @param $1 Project key
 #
 function VPM_GET_PROJECT_PAIR_BY_ALIAS
 {
@@ -212,7 +212,7 @@ function VPM_GET_PROJECT_PAIR_BY_PATH
 #
 # @global
 #
-# Stores the cached alias globally.
+# Stores the cached key globally.
 #
 function VPM_GET_CACHE
 {
@@ -226,9 +226,9 @@ function VPM_GET_CACHE
 #
 # @global
 #
-# Writes the last used project alias into cache.
+# Writes the last used project key into cache.
 #
-# @param $1 Project alias to be cached
+# @param $1 Project key to be cached
 #
 function VPM_SET_CACHE
 {
@@ -301,16 +301,16 @@ function vpm_help_directory
 #
 function vpm_show_commands
 {
-    echo -e "${COLOR_CYAN}     add${COLOR_RESET} - Maps the current working directory to a project alias."
+    echo -e "${COLOR_CYAN}     add${COLOR_RESET} - Maps the current working directory to a project key."
     echo -e "${COLOR_CYAN}      cd${COLOR_RESET} - Changes the current working directory to the working directory of a vpm project."
-    echo -e "${COLOR_CYAN}   clean${COLOR_RESET} - Cleans the vpm project repository by reconsiling invalid entries."
+    echo -e "${COLOR_CYAN}   clean${COLOR_RESET} - Cleans the vpm registry by reconsiling invalid entries."
     echo -e "${COLOR_CYAN}    edit${COLOR_RESET} - Edits the vpm tool directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
     echo -e "${COLOR_CYAN}    help${COLOR_RESET} - Provides access to additional info regarding specific vpm commands."
     echo -e "${COLOR_CYAN}    list${COLOR_RESET} - Lists all current projects managed by vpm."
-    echo -e "${COLOR_CYAN}  manage${COLOR_RESET} - Edits the vpm repository file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
+    echo -e "${COLOR_CYAN}  manage${COLOR_RESET} - Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
     echo -e "${COLOR_CYAN}    open${COLOR_RESET} - Opens the working directory of a vpm project in Finder."
     echo -e "${COLOR_CYAN} project${COLOR_RESET} - Opens a vpm project in designated IDE (supports Xcode/Sublime/Atom in respective priority)."
-    echo -e "${COLOR_CYAN}  remove${COLOR_RESET} - Removes a vpm project from the vpm repository."
+    echo -e "${COLOR_CYAN}  remove${COLOR_RESET} - Removes a vpm project from the vpm registry."
     echo -e "${COLOR_CYAN} version${COLOR_RESET} - Shows the version of ${COLOR_BLUE}vpm${COLOR_RESET}."
 }
 
@@ -329,7 +329,7 @@ function vpm_help
     if [ "$1" == "add" ]; then
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}add <project_alias>${COLOR_RESET}"
         echo
-        echo -e "Maps the current working directory to <project_alias> in vpm. If there already exists a project with the same alias, its working directory will be replaced."
+        echo -e "Maps the current working directory to <project_alias> in vpm. If there already exists a project with the same key, its working directory will be replaced."
 
     elif [ "$1" == "cd" ]; then
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}cd <project_alias_or_index>${COLOR_RESET}"
@@ -339,12 +339,12 @@ function vpm_help
     elif [ "$1" == "clean" ]; then
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}clean${COLOR_RESET}"
         echo
-        echo -e "Scans the current vpm repository and reconsiles invalid project entries."
+        echo -e "Scans the current vpm registry and reconsiles invalid project entries."
 
     elif [ "$1" == "edit" ]; then
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}edit${COLOR_RESET}"
         echo
-        echo -e "Edits the vpm repository file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
+        echo -e "Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
 
     elif [ "$1" == "list" ] || [ "$1" == "ls" ]; then
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}list${COLOR_RESET}"
@@ -354,7 +354,7 @@ function vpm_help
     elif [ "$1" == "manage" ]; then
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}manage${COLOR_RESET}"
         echo
-        echo -e "Edits the vpm repository file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
+        echo -e "Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
 
     elif [ "$1" == "open" ]; then
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}open <project_alias_or_index>${COLOR_RESET}"
@@ -369,7 +369,7 @@ function vpm_help
     elif [ "$1" == "remove" ] || [ "$1" == "rm" ]; then
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}remove <project_alias_or_index>${COLOR_RESET}"
         echo
-        echo -e "Removes a project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} from the vpm repository."
+        echo -e "Removes a project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} from the vpm registry."
 
     else
         echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_RESET}No help data available regarding ${COLOR_RED}$1${COLOR_RESET} at this point"
@@ -379,7 +379,7 @@ function vpm_help
 }
 
 #
-# Shows the current cached project alias.
+# Shows the current cached project key.
 #
 function vpm_cache
 {
@@ -394,9 +394,9 @@ function vpm_cache
 
 #
 # Adds to the vpm the current directory associated with the specified project 
-# alias.
+# key.
 #
-# @param $1 Alias of project. Leave blank or use "." to use the name of the
+# @param $1 Key of project. Leave blank or use "." to use the name of the
 #           current directory.
 #
 function vpm_add
@@ -409,13 +409,13 @@ function vpm_add
 
     VPM_SERIALIZE_REPOSITORY
 
-    local alias="$1"
+    local key="$1"
     local dir="`pwd`"
     local buffer=""
     local check=0
 
-    if [ "$alias" == "" ] || [ "$alias" == "." ]; then
-        alias="${PWD##*/}"
+    if [ "$key" == "" ] || [ "$key" == "." ]; then
+        key="${PWD##*/}"
     fi 
 
     # Iterate through the list of projects.
@@ -425,8 +425,8 @@ function vpm_add
 
         VPM_DECODE_PROJECT_PAIR "$pair"
 
-        # If the specified project alias already exists...
-        if [ "$VPM_TMP_PROJECT_ALIAS" == "$alias" ]; then
+        # If the specified project key already exists...
+        if [ "$VPM_TMP_PROJECT_ALIAS" == "$key" ]; then
             check=1
             buffer="$buffer$VPM_TMP_PROJECT_ALIAS:${dir}\n"
         # Else just add the current line to the output buffer.
@@ -436,24 +436,24 @@ function vpm_add
     done
 
     if [ $check == 0 ]; then
-        buffer="$buffer$alias:${dir}\n"
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Mapped ${COLOR_CYAN}$alias ${COLOR_RESET}to ${COLOR_CYAN}${dir}${COLOR_RESET}"
+        buffer="$buffer$key:${dir}\n"
+        echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Mapped ${COLOR_CYAN}$key ${COLOR_RESET}to ${COLOR_CYAN}${dir}${COLOR_RESET}"
     else
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Remapped ${COLOR_CYAN}$alias${COLOR_RESET} to ${COLOR_CYAN}${dir}${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Remapped ${COLOR_CYAN}$key${COLOR_RESET} to ${COLOR_CYAN}${dir}${COLOR_RESET}"
     fi
 
     echo -e $buffer > $PATH_REPOSITORY
 
     VPM_SERIALIZE_REPOSITORY
-    VPM_SET_CACHE $alias
+    VPM_SET_CACHE $key
 }
 
 #
 # Navigates to the root path of a project in Terminal. Either specify a string 
-# representing the project alias or a number prefixed by '#' representing the 
+# representing the project key or a number prefixed by '#' representing the 
 # index.
 #
-# @param $1 Project alias or index (prefixed by '#')
+# @param $1 Project key or index (prefixed by '#')
 #
 function vpm_cd
 {
@@ -547,9 +547,9 @@ function vpm_list
     VPM_SERIALIZE_REPOSITORY
 
     if (( $VPM_PROJECT_LENGTH == 0 )); then
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}There are no projects in the repository."
+        echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}There are no projects in the registry."
     else
-        echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Found ${COLOR_PURPLE}$VPM_PROJECT_LENGTH${COLOR_RESET} project(s) in repository"
+        echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Found ${COLOR_PURPLE}$VPM_PROJECT_LENGTH${COLOR_RESET} project(s) in the registry"
 
         for (( i=1; i<=$VPM_PROJECT_LENGTH; i++ ))
         do
@@ -577,9 +577,9 @@ function vpm_manage
 
 #
 # Opens a project in Finder. Either specify a string representing the project 
-# alias or a number representing the index.
+# key or a number representing the index.
 #
-# @param $1 Project alias or index
+# @param $1 Project key or index
 #
 function vpm_open
 {
@@ -609,9 +609,9 @@ function vpm_open
 
 #
 # Removes a project from vpm. Either specify a string representing the project 
-# alias or a number representing the index.
+# key or a number representing the index.
 #
-# @param $1 Project alias or index. Leave blank or specify "." to use the name
+# @param $1 Project key or index. Leave blank or specify "." to use the name
 #           of the current directory.
 #
 function vpm_remove
@@ -622,13 +622,13 @@ function vpm_remove
         return
     fi
 
-    local alias="$1"
+    local key="$1"
 
-    if [ "$alias" == "" ] || [ "$alias" == "." ]; then
-        alias="${PWD##*/}"
+    if [ "$key" == "" ] || [ "$key" == "." ]; then
+        key="${PWD##*/}"
     fi 
 
-    [[ $alias =~ ^-?[0-9]+$ ]] && use_idx=1 || use_idx=0
+    [[ $key =~ ^-?[0-9]+$ ]] && use_idx=1 || use_idx=0
 
     VPM_SERIALIZE_REPOSITORY
 
@@ -644,14 +644,14 @@ function vpm_remove
         VPM_DECODE_PROJECT_PAIR "$pair"
 
         # If arg is a project index...
-        if (( $use_idx == 1 )) && (( $i == $alias )); then
+        if (( $use_idx == 1 )) && (( $i == $key )); then
             skip=1
             removed=1
 
             echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Removed project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} at index ${COLOR_PURPLE}$i${COLOR_RESET}"
 
-        # Else if arg is a project alias...
-        elif (( $use_idx == 0 )) && [ "$VPM_TMP_PROJECT_ALIAS" == "$alias" ]; then
+        # Else if arg is a project key...
+        elif (( $use_idx == 0 )) && [ "$VPM_TMP_PROJECT_ALIAS" == "$key" ]; then
             skip=1
             removed=1
 
@@ -667,9 +667,9 @@ function vpm_remove
     # If nothing was removed, throw error.
     if (( $removed == 0 )); then
         if (( $use_idx == 1 )); then
-            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Index ${COLOR_PURPLE}$alias${COLOR_RESET} is out of bounds"
+            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Index ${COLOR_PURPLE}$key${COLOR_RESET} is out of bounds"
         else
-            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project with alias ${COLOR_CYAN}$alias${COLOR_RESET} not found"
+            echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project with key ${COLOR_CYAN}$key${COLOR_RESET} not found"
         fi
     fi
 
@@ -678,10 +678,10 @@ function vpm_remove
 
 #
 # Opens a project from vpm. Either specify a string representing the project 
-# alias or a number representing the index.
+# key or a number representing the index.
 #
 # @param $1 Project extension
-# @param $2 Project alias or index
+# @param $2 Project key or index
 #
 function vpm_project
 {
