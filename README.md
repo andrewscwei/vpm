@@ -65,7 +65,7 @@ Opens a `vpm` project in designated IDE (supports Xcode/Sublime in respective pr
 ### `vpm remove <project_alias_or_index>`
 Removes a `vpm` project from the `vpm` registry. If you don't specify a project key or index, the name of the current working directory will be used.
 
-### `vpm <command>`: 
+### `vpm <command>`
 When no project key or index is specified, the last iterated project will be used to perform the `<command`>. You can use `vpm cache` to see what the last iterated project is. Not all commands support this notation.
 
 ### `vpm <command> .`
