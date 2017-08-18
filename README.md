@@ -7,7 +7,26 @@ A CLI tool that helps manage and open local projects quickly. No more manually n
 1. From Terminal, you `cd` to the directory of a project you are working on.
 2. Run `vpm add` to add the current directory to the `vpm` registry. The key is the name of the directory if there is no additional parameter specified. For example, `vpm add foo` will map the current directory to `foo` in the `vpm` registry.
 
-From now on you can just run `vpm cd foo` to navigate to that project directly from Terminal. Better yet, you can run `vpm project foo` or `vpm p foo` for short to immediate open it using either VSCode/Xcode/Sublime/Atom (it scans for VSCode/Xcode project files first then falls back to Sublime/Atom)!
+From now on you can just run `vpm cd foo` to navigate to that project directly from Terminal. Better yet, you can run `vpm project foo` or `vpm p foo` for short to immediate open it using either Xcode/VSCode/Sublime/Atom/nano (it scans for Xcode project files first then falls back to VSCode/Sublime/Atom/nano respectively, depending on which editor is installed in your system)!
+
+## Installation
+
+Clone this repo and symlink to `/usr/local/bin` (you may need `sudo` access):
+
+```sh
+$ git clone https://github.com/andrewscwei/vpm.git
+$ sudo ln -s /path/to/vpm /usr/local/bin
+```
+
+Create an alias in your local `.bash_profile` or equivalent so `vpm` can directly execute commands like `cd`:
+
+```sh
+# ~/.bash_profile
+
+...
+
+alias vpm=". vpm"
+```
 
 ## Commands
 
@@ -55,40 +74,25 @@ Performs the `<command>` on the hashed project whose path equates the current di
 ### `vpm help` 
 ...or simply `vpm` for a full list of commands with details.
 
-## Usage
+> Most commands have equivalent short notations. For example, instead of doing `vpm project` you can do `vpm p`.
 
-Clone this repo and symlink to `/usr/local/bin` (you may need `sudo` access):
-
-```sh
-$ git clone https://github.com/andrewscwei/vpm.git
-$ sudo ln -s /path/to/vpm /usr/local/bin
-```
-
-Create an alias in your local `.bash_profile` or equivalent so `vpm` can directly execute commands like `cd`:
-
-```sh
-# ~/.bash_profile
-
-...
-
-alias vpm=". vpm"
-```
+> If you previously executed a command on a valid key, it stays in cache. You can then access it using `.`. i.e. `vpm p .`.  To view which key is cached, do `vpm cache`.
 
 ## Example
 
-Suppose you have a web project located in `~/projects/SampleProject`. With `vpm`, you can enter shell, `cd` to that directory, and hash that directory to the `vpm` registry with a key by executing `vpm add SampleProject`, `SampleProject` being the key.
+Suppose you have a project located in `~/projects/SampleProject`. With `vpm`, you can enter shell, `cd` to that directory, and hash that directory to the `vpm` registry with a key by executing `vpm add SampleProject`, `SampleProject` being the key.
 
-You can then quickly access any project in the `vpm` hash by doing the following (using `SampleProject` as an example):
+You can then quickly access that project by:
 
-`vpm open SampleProject` will immediately open that directory in Finder
+```sh
+# Opens SampleProject in Finder
+$ vpm open SampleProject
 
-`vpm project SampleProject` will attempt to look for either an Xcode or Sublime in the root directory of `SampleProject` and open it
+# Opens SampleProject in the appropriate text editor in the following priority: Xcode, VSCode, Sublime, Atom, nano
+$ vpm project SampleProject
+```
 
-With this set up you can hash multiple projects into `vpm` and quickly access all of them. When the list of projects gets long, you can do `vpm list` to see the existing projects in the hash and simply access each of them by their index. For example, if `SampleProject` is the 6th project on the list, you can do `vpm open 6` to open it in Finder.
-
-Most commands have equivalent short notations. For example, instead of doing `vpm project` you can do `vpm p`.
-
-If you previously executed a command on a valid key, it stays in cache. You can then access it using `.`. i.e. `vpm p .`.  To view which key is cached, do `vpm cache`.
+With this set up you can add multiple projects to the `vpm` registry and quickly access all of them. You can do `vpm list` to see the existing projects in the registry and simply access each of them by their key or index. For example, if `SampleProject` is the 6th project on the list, you can do `vpm open 6` to open it in Finder.
 
 ## License
 
