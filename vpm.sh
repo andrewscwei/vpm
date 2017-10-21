@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="0.10.0"
+VPM_VERSION="0.11.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -588,14 +588,12 @@ function vpm_show_commands() {
 	echo -e "${COLOR_CYAN}     add${COLOR_RESET} - Maps the current working directory to a project key."
 	echo -e "${COLOR_CYAN}      cd${COLOR_RESET} - Changes the current working directory to the working directory of a vpm project."
 	echo -e "${COLOR_CYAN}   clean${COLOR_RESET} - Cleans the vpm registry by reconsiling invalid entries."
-	echo -e "${COLOR_CYAN}    edit${COLOR_RESET} - Edits the vpm tool directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
+	echo -e "${COLOR_CYAN}    edit${COLOR_RESET} - Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
 	echo -e "${COLOR_CYAN}    help${COLOR_RESET} - Provides access to additional info regarding specific vpm commands."
 	echo -e "${COLOR_CYAN}    list${COLOR_RESET} - Lists all current projects managed by vpm."
-	echo -e "${COLOR_CYAN}  manage${COLOR_RESET} - Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
 	echo -e "${COLOR_CYAN}    open${COLOR_RESET} - Opens the working directory of a vpm project in Finder."
 	echo -e "${COLOR_CYAN} project${COLOR_RESET} - Opens a vpm project in designated IDE (supports Xcode/Sublime/Atom in respective priority)."
 	echo -e "${COLOR_CYAN}  remove${COLOR_RESET} - Removes a vpm project from the vpm registry."
-	echo -e "${COLOR_CYAN} version${COLOR_RESET} - Shows the version of ${COLOR_BLUE}vpm${COLOR_RESET}."
 }
 
 # Displays help documents regarding vpm.
@@ -631,11 +629,6 @@ function vpm_help() {
 		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}list${COLOR_RESET}"
 		echo
 		echo -e "Lists all the current projects managed by vpm."
-
-	elif [ "$1" == "manage" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}manage${COLOR_RESET}"
-		echo
-		echo -e "Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
 
 	elif [ "$1" == "open" ]; then
 		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}open <project_alias_or_index>${COLOR_RESET}"
