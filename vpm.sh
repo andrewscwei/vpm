@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="0.9.0"
+VPM_VERSION="0.10.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -676,5 +676,7 @@ function main() {
   else echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
   fi
 }
+
+main
 
 } # This ensures the entire script is downloaded #
