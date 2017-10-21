@@ -6,8 +6,10 @@
 # This software is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license.php
 
-# Version.
-VERSION="v0.7.0"
+{ # This ensures the entire script is downloaded #
+
+# Config.
+VPM_VERSION="v0.8.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -27,6 +29,15 @@ PATH_REPOSITORY=$PATH_VPM_ROOT"/registry"
 PATH_CACHE=$PATH_VPM_ROOT"/registry-cache"
 PATH_HOSTS="/etc/hosts"
 PATH_VHOSTS="/etc/apache2/extra/httpd-vhosts.conf"
+
+# @global
+# 
+# Checks if a command is available
+#
+# @param $1 Name of the command.
+function VPM_HAS() {
+  type "$1" > /dev/null 2>&1
+}
 
 # @global
 #
@@ -216,119 +227,25 @@ function VPM_SET_CACHE() {
 	echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Problem writing cache"
 }
 
+# @global
+#
 # Opens the provided path in the preferred editor.
+#
+# @param $1 Path to open.
 function VPM_EDIT() {
 	if [ "$1" == "" ]; then return; fi
 
-	if hash code 2>/dev/null; then
+	if VPM_HAS "code"; then
 		code "$1"
-	elif hash subl 2>/dev/null; then
+	elif VPM_HAS "subl"; then
 		subl "$1"
-	elif hash atom 2>/dev/null; then
+	elif VPM_HAS "atom"; then
 		atom "$1"
-	elif hash vim 2>/dev/null; then
-		vim "$1"
-	elif hash emacs 2>/dev/null; then
-		emacs "$1"
-	else
-		nano "$1"
-	fi
-}
-
-# Displays the vpm directory.
-function vpm_directory() {
-	echo
-	echo -e "Usage: ${COLOR_BLUE}vpm ${COLOR_CYAN}<command>${COLOR_RESET}"
-	echo
-	echo -e "where ${COLOR_CYAN}<command>${COLOR_RESET} is one of:"
-	vpm_show_commands
-	echo
-}
-
-# Displays the vpm help directory.
-function vpm_help_directory() {
-	echo
-	echo -e "Usage: ${COLOR_BLUE}vpm ${COLOR_CYAN}help <command>${COLOR_RESET} or ${COLOR_BLUE}vpm ${COLOR_CYAN}<command> -h${COLOR_RESET} "
-	echo
-	echo -e "where ${COLOR_CYAN}<command>${COLOR_RESET} is one of:"
-	vpm_show_commands
-	echo
-}
-
-# Echoes available vpm commands.
-function vpm_show_commands() {
-	echo -e "${COLOR_CYAN}     add${COLOR_RESET} - Maps the current working directory to a project key."
-	echo -e "${COLOR_CYAN}      cd${COLOR_RESET} - Changes the current working directory to the working directory of a vpm project."
-	echo -e "${COLOR_CYAN}   clean${COLOR_RESET} - Cleans the vpm registry by reconsiling invalid entries."
-	echo -e "${COLOR_CYAN}    edit${COLOR_RESET} - Edits the vpm tool directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
-	echo -e "${COLOR_CYAN}    help${COLOR_RESET} - Provides access to additional info regarding specific vpm commands."
-	echo -e "${COLOR_CYAN}    list${COLOR_RESET} - Lists all current projects managed by vpm."
-	echo -e "${COLOR_CYAN}  manage${COLOR_RESET} - Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
-	echo -e "${COLOR_CYAN}    open${COLOR_RESET} - Opens the working directory of a vpm project in Finder."
-	echo -e "${COLOR_CYAN} project${COLOR_RESET} - Opens a vpm project in designated IDE (supports Xcode/Sublime/Atom in respective priority)."
-	echo -e "${COLOR_CYAN}  remove${COLOR_RESET} - Removes a vpm project from the vpm registry."
-	echo -e "${COLOR_CYAN} version${COLOR_RESET} - Shows the version of ${COLOR_BLUE}vpm${COLOR_RESET}."
-}
-
-# Displays help documents regarding vpm.
-function vpm_help() {
-	if [ "$1" == "" ] || [ "$1" == "-h" ]; then
-		vpm_help_directory
-		return
-	fi
-
-	echo
-
-	if [ "$1" == "add" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}add <project_alias>${COLOR_RESET}"
-		echo
-		echo -e "Maps the current working directory to <project_alias> in vpm. If there already exists a project with the same key, its working directory will be replaced."
-
-	elif [ "$1" == "cd" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}cd <project_alias_or_index>${COLOR_RESET}"
-		echo
-		echo -e "Changes the current working directory to that of the specified ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET}."
-
-	elif [ "$1" == "clean" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}clean${COLOR_RESET}"
-		echo
-		echo -e "Scans the current vpm registry and reconsiles invalid project entries."
-
-	elif [ "$1" == "edit" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}edit${COLOR_RESET}"
-		echo
-		echo -e "Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
-
-	elif [ "$1" == "list" ] || [ "$1" == "ls" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}list${COLOR_RESET}"
-		echo
-		echo -e "Lists all the current projects managed by vpm."
-
-	elif [ "$1" == "manage" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}manage${COLOR_RESET}"
-		echo
-		echo -e "Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
-
-	elif [ "$1" == "open" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}open <project_alias_or_index>${COLOR_RESET}"
-		echo
-		echo -e "Opens the working directory of a vpm project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} in Finder."
-
-	elif [ "$1" == "project" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}project <project_alias_or_index>${COLOR_RESET}"
-		echo
-		echo -e "Opens a vpm project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} in its designated IDE. vpm scans for the following project files in order: Xcode, and Sublime. If no project files associated with the aforementioned applications are found, this command will be ignored."
-
-	elif [ "$1" == "remove" ] || [ "$1" == "rm" ]; then
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}remove <project_alias_or_index>${COLOR_RESET}"
-		echo
-		echo -e "Removes a project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} from the vpm registry."
-
-	else
-		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_RESET}No help data available regarding ${COLOR_RED}$1${COLOR_RESET} at this point"
-	fi
-
-	echo
+	elif VPM_HAS "mate"; then
+    mate "$1"
+  else
+    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}No editors available"
+  fi
 }
 
 # Shows the current cached project key.
@@ -345,8 +262,8 @@ function vpm_cache() {
 # Adds to the vpm the current directory associated with the specified project
 # key.
 #
-# @param $1 Key of project. Leave blank or use "." to use the name of the
-#           current directory.
+# @param [$1] Key of project. Leave blank or use "." to use the name of the
+#             current directory.
 function vpm_add() {
 	# Help.
 	if [ "$1" == "-h" ]; then
@@ -398,7 +315,7 @@ function vpm_add() {
 # representing the project key or a number prefixed by '#' representing the
 # index.
 #
-# @param $1 Project key or index (prefixed by '#')
+# @param $1 Project key or index
 function vpm_cd() {
 	# Help.
 	if [ "$1" == "-h" ]; then
@@ -422,7 +339,7 @@ function vpm_cd() {
 	echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project with reference ${COLOR_CYAN}$1${COLOR_RESET} not found"
 }
 
-# Cleans the current vpm list.
+# Tidies up the registry file, removing blank lines and fixing bad formatting.
 function vpm_clean() {
 	# Help.
 	if [ "$1" == "-h" ]; then
@@ -454,20 +371,6 @@ function vpm_clean() {
 	echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Reconciled $count project(s)"
 }
 
-# Opens the vpm tool in the default text editor.
-function vpm_edit() {
-	# Help.
-	if [ "$1" == "-h" ]; then
-		vpm_help "edit"
-	elif [ "$1" == "hosts" ]; then
-		VPM_EDIT "$PATH_HOSTS"
-	elif [ "$1" == "vhosts" ]; then
-		VPM_EDIT "$PATH_VHOSTS"
-	else
-		VPM_EDIT $PATH_VPM_ROOT"/vpm"
-	fi
-}
-
 # Lists all the projects managed by vpm.
 function vpm_list() {
 	# Help.
@@ -494,8 +397,8 @@ function vpm_list() {
 	fi
 }
 
-# Manages all the projects managed by vpm in the default text editor.
-function vpm_manage() {
+# Edits the local registry.
+function vpm_edit_registry() {
 	# Help.
 	if [ "$1" == "-h" ]; then
 		vpm_help "manage"
@@ -660,19 +563,118 @@ function vpm_project() {
 	echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project with reference ${COLOR_CYAN}$2${COLOR_RESET} not found"
 }
 
+# Displays the vpm directory.
+function vpm_directory() {
+	echo
+	echo -e "Usage: ${COLOR_BLUE}vpm ${COLOR_CYAN}<command>${COLOR_RESET}"
+	echo
+	echo -e "where ${COLOR_CYAN}<command>${COLOR_RESET} is one of:"
+	vpm_show_commands
+	echo
+}
+
+# Displays the vpm help directory.
+function vpm_help_directory() {
+	echo
+	echo -e "Usage: ${COLOR_BLUE}vpm ${COLOR_CYAN}help <command>${COLOR_RESET} or ${COLOR_BLUE}vpm ${COLOR_CYAN}<command> -h${COLOR_RESET} "
+	echo
+	echo -e "where ${COLOR_CYAN}<command>${COLOR_RESET} is one of:"
+	vpm_show_commands
+	echo
+}
+
+# Echoes available vpm commands.
+function vpm_show_commands() {
+	echo -e "${COLOR_CYAN}     add${COLOR_RESET} - Maps the current working directory to a project key."
+	echo -e "${COLOR_CYAN}      cd${COLOR_RESET} - Changes the current working directory to the working directory of a vpm project."
+	echo -e "${COLOR_CYAN}   clean${COLOR_RESET} - Cleans the vpm registry by reconsiling invalid entries."
+	echo -e "${COLOR_CYAN}    edit${COLOR_RESET} - Edits the vpm tool directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
+	echo -e "${COLOR_CYAN}    help${COLOR_RESET} - Provides access to additional info regarding specific vpm commands."
+	echo -e "${COLOR_CYAN}    list${COLOR_RESET} - Lists all current projects managed by vpm."
+	echo -e "${COLOR_CYAN}  manage${COLOR_RESET} - Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
+	echo -e "${COLOR_CYAN}    open${COLOR_RESET} - Opens the working directory of a vpm project in Finder."
+	echo -e "${COLOR_CYAN} project${COLOR_RESET} - Opens a vpm project in designated IDE (supports Xcode/Sublime/Atom in respective priority)."
+	echo -e "${COLOR_CYAN}  remove${COLOR_RESET} - Removes a vpm project from the vpm registry."
+	echo -e "${COLOR_CYAN} version${COLOR_RESET} - Shows the version of ${COLOR_BLUE}vpm${COLOR_RESET}."
+}
+
+# Displays help documents regarding vpm.
+function vpm_help() {
+	if [ "$1" == "" ] || [ "$1" == "-h" ]; then
+		vpm_help_directory
+		return
+	fi
+
+	echo
+
+	if [ "$1" == "add" ]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}add <project_alias>${COLOR_RESET}"
+		echo
+		echo -e "Maps the current working directory to <project_alias> in vpm. If there already exists a project with the same key, its working directory will be replaced."
+
+	elif [ "$1" == "cd" ]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}cd <project_alias_or_index>${COLOR_RESET}"
+		echo
+		echo -e "Changes the current working directory to that of the specified ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET}."
+
+	elif [ "$1" == "clean" ]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}clean${COLOR_RESET}"
+		echo
+		echo -e "Scans the current vpm registry and reconsiles invalid project entries."
+
+	elif [ "$1" == "edit" ]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}edit${COLOR_RESET}"
+		echo
+		echo -e "Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
+
+	elif [ "$1" == "list" ] || [ "$1" == "ls" ]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}list${COLOR_RESET}"
+		echo
+		echo -e "Lists all the current projects managed by vpm."
+
+	elif [ "$1" == "manage" ]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}manage${COLOR_RESET}"
+		echo
+		echo -e "Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
+
+	elif [ "$1" == "open" ]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}open <project_alias_or_index>${COLOR_RESET}"
+		echo
+		echo -e "Opens the working directory of a vpm project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} in Finder."
+
+	elif [ "$1" == "project" ]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}project <project_alias_or_index>${COLOR_RESET}"
+		echo
+		echo -e "Opens a vpm project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} in its designated IDE. vpm scans for the following project files in order: Xcode, and Sublime. If no project files associated with the aforementioned applications are found, this command will be ignored."
+
+	elif [ "$1" == "remove" ] || [ "$1" == "rm" ]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}remove <project_alias_or_index>${COLOR_RESET}"
+		echo
+		echo -e "Removes a project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} from the vpm registry."
+
+	else
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_RESET}No help data available regarding ${COLOR_RED}$1${COLOR_RESET} at this point"
+	fi
+
+	echo
+}
+
 # Main process.
-if   [ "$1" == "" ] || [ "$1" == "dir" ] || [ "$1" == "d" ];         then vpm_directory $2
-elif [ "$1" == "add" ] || [ "$1" == "a" ];                           then vpm_add $2
-elif [ "$1" == "cache" ];                                            then vpm_cache $2
-elif [ "$1" == "cd" ];                                               then vpm_cd $2
-elif [ "$1" == "clean" ] || [ "$1" == "c" ];                         then vpm_clean $2
-elif [ "$1" == "edit" ] || [ "$1" == "e" ];                          then vpm_edit $2
-elif [ "$1" == "help" ] || [ "$1" == "h" ];                          then vpm_help $2
-elif [ "$1" == "list" ] || [ "$1" == "ls" ] || [ "$1" == "l" ];      then vpm_list $2
-elif [ "$1" == "manage" ] || [ "$1" == "m" ];                        then vpm_manage $2
-elif [ "$1" == "open" ] || [ "$1" == "o" ];                          then vpm_open $2
-elif [ "$1" == "remove" ] || [ "$1" == "rm" ] || [ "$1" == "r" ];    then vpm_remove $2
-elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "p" ]; then vpm_project $2
-elif [ "$1" == "-v" ];                                               then echo -e $VERSION
-else echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
-fi
+function main() {
+  if   [ "$1" == "" ] || [ "$1" == "dir" ] || [ "$1" == "d" ];         then vpm_directory $2
+  elif [ "$1" == "add" ] || [ "$1" == "a" ];                           then vpm_add $2
+  elif [ "$1" == "cache" ];                                            then vpm_cache $2
+  elif [ "$1" == "cd" ];                                               then vpm_cd $2
+  elif [ "$1" == "clean" ] || [ "$1" == "c" ];                         then vpm_clean $2
+  elif [ "$1" == "help" ] || [ "$1" == "h" ];                          then vpm_help $2
+  elif [ "$1" == "list" ] || [ "$1" == "ls" ] || [ "$1" == "l" ];      then vpm_list $2
+  elif [ "$1" == "edit" ] || [ "$1" == "e" ];                          then vpm_edit_registry $2
+  elif [ "$1" == "open" ] || [ "$1" == "o" ];                          then vpm_open $2
+  elif [ "$1" == "remove" ] || [ "$1" == "rm" ] || [ "$1" == "r" ];    then vpm_remove $2
+  elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "p" ]; then vpm_project $2
+  elif [ "$1" == "-v" ];                                               then echo -e $VPM_VERSION
+  else echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
+  fi
+}
+
+} # This ensures the entire script is downloaded #

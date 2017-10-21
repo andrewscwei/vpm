@@ -13,21 +13,16 @@ From now on you can just run `vpm cd foo` to navigate to that project directly f
 
 ## Installation
 
-Clone this repo and symlink to `/usr/local/bin` (you may need `sudo` access):
+Install vpm via cURL:
 
 ```sh
-$ git clone https://github.com/andrewscwei/vpm.git
-$ sudo ln -s /path/to/vpm /usr/local/bin
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
 ```
 
-Create an alias in your local `.bash_profile` or equivalent so `vpm` can directly execute commands like `cd`:
+or Wget: 
 
 ```sh
-# ~/.bash_profile
-
-...
-
-alias vpm=". vpm"
+wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
 ```
 
 ## Commands
