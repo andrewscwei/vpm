@@ -16,13 +16,13 @@ From now on you can just run `vpm cd foo` to navigate to that project directly f
 Install vpm via cURL:
 
 ```sh
-curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v0.13.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v1.0.0/install.sh | bash
 ```
 
 or Wget: 
 
 ```sh
-wget -qO- https://raw.githubusercontent.com/andrewscwei/vpm/v0.13.0/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/andrewscwei/vpm/v1.0.0/install.sh | bash
 ```
 
 ## Commands
