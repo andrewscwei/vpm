@@ -3,7 +3,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="v0.8.0"
+VPM_VERSION="0.9.0"
 VPM_SOURCE=https://raw.githubusercontent.com/andrewscwei/vpm/v$VPM_VERSION/vpm.sh
 
 # Colors.
@@ -59,9 +59,9 @@ function vpm_install() {
   mkdir -p "$dest"
 
   if [ -f "$dest/vpm.sh" ]; then
-  	echo -e "${COLOR_BLUE}vpm: vpm ${COLOR_YELLOW}is already installed in ${COLOR_CYAN}$dest${COLOR_YELLOW}, updating it instead...${COLOR_RESET}"
+  	echo "${COLOR_BLUE}vpm: vpm ${COLOR_YELLOW}is already installed in ${COLOR_CYAN}$dest${COLOR_YELLOW}, updating it instead...${COLOR_RESET}"
   else
-  	echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Downloading ${COLOR_BLUE}vpm${COLOR_RESET} to ${COLOR_CYAN}$dest${COLOR_RESET}"
+  	echo "${COLOR_BLUE}vpm: ${COLOR_RESET}Downloading ${COLOR_BLUE}vpm${COLOR_RESET} to ${COLOR_CYAN}$dest${COLOR_RESET}"
   fi
 
   # Download the script.
@@ -103,25 +103,25 @@ function main() {
   elif [ -f "$HOME/.profile" ]; then
     profile="$HOME/.profile"
   else
-    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Profile not found, tried ${COLOR_CYAN}~/.bashrc${COLOR_RESET}, ${COLOR_CYAN}~/.bash_profile${COLOR_RESET} and ${COLOR_CYAN}~/.profile${COLOR_RESET}"
-    echo -e "     Create one of them and run this script again"
-    echo -e "     OR"
-    echo -e "     Append the following lines to the correct file yourself:"
-    echo -e "     ${COLOR_CYAN}${sourcestr}${COLOR_RESET}"
+    echo "${COLOR_BLUE}vpm: ${COLOR_RESET}Profile not found, tried ${COLOR_CYAN}~/.bashrc${COLOR_RESET}, ${COLOR_CYAN}~/.bash_profile${COLOR_RESET} and ${COLOR_CYAN}~/.profile${COLOR_RESET}"
+    echo "     Create one of them and run this script again"
+    echo "     OR"
+    echo "     Append the following lines to the correct file yourself:"
+    echo "     ${COLOR_CYAN}${sourcestr}${COLOR_RESET}"
     exit 1
   fi
 
   if ! command grep -qc '/vpm.sh' "$profile"; then
-    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Appending ${COLOR_BLUE}vpm${COLOR_RESET} source string to ${COLOR_CYAN}$profile${COLOR_RESET}"
+    echo "${COLOR_BLUE}vpm: ${COLOR_RESET}Appending ${COLOR_BLUE}vpm${COLOR_RESET} source string to ${COLOR_CYAN}$profile${COLOR_RESET}"
     command printf "${sourcestr}" >> "$profile"
   else
-    echo -e "${COLOR_BLUE}vpm: vpm ${COLOR_RESET}source string is already in ${COLOR_CYAN}$profile${COLOR_RESET}"
+    echo "${COLOR_BLUE}vpm: vpm ${COLOR_RESET}source string is already in ${COLOR_CYAN}$profile${COLOR_RESET}"
   fi
 
   # Source vpm
   \. "$dest/vpm.sh"
 
-  echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}Installation complete. Close and reopen your terminal to start using ${COLOR_BLUE}vpm${COLOR_GREEN}.${COLOR_RESET}"
+  echo "${COLOR_BLUE}vpm: ${COLOR_GREEN}Installation complete. Close and reopen your terminal to start using ${COLOR_BLUE}vpm${COLOR_GREEN}.${COLOR_RESET}"
 }
 
 main

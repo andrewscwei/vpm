@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="v0.8.0"
+VPM_VERSION="0.9.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -672,7 +672,7 @@ function main() {
   elif [ "$1" == "open" ] || [ "$1" == "o" ];                          then vpm_open $2
   elif [ "$1" == "remove" ] || [ "$1" == "rm" ] || [ "$1" == "r" ];    then vpm_remove $2
   elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "p" ]; then vpm_project $2
-  elif [ "$1" == "-v" ];                                               then echo -e $VPM_VERSION
+  elif [ "$1" == "-v" ];                                               then echo -e "v$VPM_VERSION"
   else echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
   fi
 }
