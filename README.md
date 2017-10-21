@@ -16,13 +16,13 @@ From now on you can just run `vpm cd foo` to navigate to that project directly f
 Install vpm via cURL:
 
 ```sh
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
+curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v0.8.0/vpm.sh | bash
 ```
 
 or Wget: 
 
 ```sh
-wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/andrewscwei/vpm/v0.8.0/vpm.sh | bash
 ```
 
 ## Commands
