@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="0.12.0"
+VPM_VERSION="0.13.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["

@@ -3,7 +3,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="0.12.0"
+VPM_VERSION="0.13.0"
 VPM_SOURCE=https://raw.githubusercontent.com/andrewscwei/vpm/v$VPM_VERSION/vpm.sh
 
 # Colors.
@@ -82,44 +82,48 @@ function vpm_install() {
 }
 
 # Main process
-# Download and install the script.
-if VPM_HAS vpm_download_command; then
-  vpm_install
-else
-  echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}You need ${COLOR_CYAN}curl${COLOR_RED} or ${COLOR_CYAN}wget${COLOR_RED} to install ${COLOR_BLUE}vpm${COLOR_RESET}"
-  exit 1
-fi
+function main() {
+  # Download and install the script.
+  if VPM_HAS vpm_download_command; then
+    vpm_install
+  else
+    echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}You need ${COLOR_CYAN}curl${COLOR_RED} or ${COLOR_CYAN}wget${COLOR_RED} to install ${COLOR_BLUE}vpm${COLOR_RESET}"
+    exit 1
+  fi
 
-# Edit profile file to set up vpm.
-local dest="$(VPM_INSTALL_DIR)"
-local profile=''
-local sourcestr="\nalias vpm='. ${dest}/vpm.sh'\n"
+  # Edit profile file to set up vpm.
+  local dest="$(VPM_INSTALL_DIR)"
+  local profile=''
+  local sourcestr="\nalias vpm='. ${dest}/vpm.sh'\n"
 
-if [ -f "$HOME/.profile" ]; then
-  profile="$HOME/.profile"
-elif [ -f "$HOME/.bashrc" ]; then
-  profile="$HOME/.bashrc"
-elif [ -f "$HOME/.bash_profile" ]; then
-  profile="$HOME/.bash_profile"
-else
-  echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Profile not found, tried ${COLOR_CYAN}~/.profile${COLOR_RESET}, ${COLOR_CYAN}~/.bashrc${COLOR_RESET} and ${COLOR_CYAN}~/.base_profile${COLOR_RESET}"
-  echo -e "     Create one of them and run this script again"
-  echo -e "     OR"
-  echo -e "     Append the following lines to the correct file yourself:"
-  echo -e "     ${COLOR_CYAN}${sourcestr}${COLOR_RESET}"
-  exit 1
-fi
+  if [ -f "$HOME/.profile" ]; then
+    profile="$HOME/.profile"
+  elif [ -f "$HOME/.bashrc" ]; then
+    profile="$HOME/.bashrc"
+  elif [ -f "$HOME/.bash_profile" ]; then
+    profile="$HOME/.bash_profile"
+  else
+    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Profile not found, tried ${COLOR_CYAN}~/.profile${COLOR_RESET}, ${COLOR_CYAN}~/.bashrc${COLOR_RESET} and ${COLOR_CYAN}~/.base_profile${COLOR_RESET}"
+    echo -e "     Create one of them and run this script again"
+    echo -e "     OR"
+    echo -e "     Append the following lines to the correct file yourself:"
+    echo -e "     ${COLOR_CYAN}${sourcestr}${COLOR_RESET}"
+    exit 1
+  fi
 
-if ! command grep -qc '/vpm.sh' "$profile"; then
-  echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Appending ${COLOR_BLUE}vpm${COLOR_RESET} source string to ${COLOR_CYAN}$profile${COLOR_RESET}"
-  command printf "${sourcestr}" >> "$profile"
-else
-  echo -e "${COLOR_BLUE}vpm: vpm ${COLOR_RESET}source string is already in ${COLOR_CYAN}$profile${COLOR_RESET}"
-fi
+  if ! command grep -qc '/vpm.sh' "$profile"; then
+    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Appending ${COLOR_BLUE}vpm${COLOR_RESET} source string to ${COLOR_CYAN}$profile${COLOR_RESET}"
+    command printf "${sourcestr}" >> "$profile"
+  else
+    echo -e "${COLOR_BLUE}vpm: vpm ${COLOR_RESET}source string is already in ${COLOR_CYAN}$profile${COLOR_RESET}"
+  fi
 
-# Source vpm
-\. "$dest/vpm.sh"
+  # Source vpm
+  \. "$dest/vpm.sh"
 
-echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}Installation complete. Close and reopen your terminal to start using ${COLOR_BLUE}vpm${COLOR_RESET}"
+  echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}Installation complete. Close and reopen your terminal to start using ${COLOR_BLUE}vpm${COLOR_RESET}"
+}
+
+main
 
 } # This ensures the entire script is downloaded #
