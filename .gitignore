@@ -64,5 +64,9 @@ lib
 .env*
 .credentials
 
+# VPM resources
+registry
+registry-cache
+
 # Ignores
 !.keep
