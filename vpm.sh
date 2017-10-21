@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.0.0"
+VPM_VERSION="1.0.1"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -653,23 +653,19 @@ function vpm_help() {
 }
 
 # Main process.
-function main() {
-  if   [ "$1" == "" ] || [ "$1" == "dir" ] || [ "$1" == "d" ];         then vpm_directory $2
-  elif [ "$1" == "add" ] || [ "$1" == "a" ];                           then vpm_add $2
-  elif [ "$1" == "cache" ];                                            then vpm_cache $2
-  elif [ "$1" == "cd" ];                                               then vpm_cd $2
-  elif [ "$1" == "clean" ] || [ "$1" == "c" ];                         then vpm_clean $2
-  elif [ "$1" == "help" ] || [ "$1" == "h" ];                          then vpm_help $2
-  elif [ "$1" == "list" ] || [ "$1" == "ls" ] || [ "$1" == "l" ];      then vpm_list $2
-  elif [ "$1" == "edit" ] || [ "$1" == "e" ];                          then vpm_edit_registry $2
-  elif [ "$1" == "open" ] || [ "$1" == "o" ];                          then vpm_open $2
-  elif [ "$1" == "remove" ] || [ "$1" == "rm" ] || [ "$1" == "r" ];    then vpm_remove $2
-  elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "p" ]; then vpm_project $2
-  elif [ "$1" == "-v" ];                                               then echo -e "v$VPM_VERSION"
-  else echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
-  fi
-}
-
-main
+if   [ "$1" == "" ] || [ "$1" == "dir" ] || [ "$1" == "d" ];         then vpm_directory $2
+elif [ "$1" == "add" ] || [ "$1" == "a" ];                           then vpm_add $2
+elif [ "$1" == "cache" ];                                            then vpm_cache $2
+elif [ "$1" == "cd" ];                                               then vpm_cd $2
+elif [ "$1" == "clean" ] || [ "$1" == "c" ];                         then vpm_clean $2
+elif [ "$1" == "help" ] || [ "$1" == "h" ];                          then vpm_help $2
+elif [ "$1" == "list" ] || [ "$1" == "ls" ] || [ "$1" == "l" ];      then vpm_list $2
+elif [ "$1" == "edit" ] || [ "$1" == "e" ];                          then vpm_edit_registry $2
+elif [ "$1" == "open" ] || [ "$1" == "o" ];                          then vpm_open $2
+elif [ "$1" == "remove" ] || [ "$1" == "rm" ] || [ "$1" == "r" ];    then vpm_remove $2
+elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "p" ]; then vpm_project $2
+elif [ "$1" == "-v" ];                                               then echo -e "v$VPM_VERSION"
+else echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
+fi
 
 } # This ensures the entire script is downloaded #
