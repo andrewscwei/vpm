@@ -1,16 +1,11 @@
 #!/bin/bash
-#
+
 # VARS project manager (vpm).
-#
-# (c) Andrew Wei
-#
+# © Andrew Wei
 # This software is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license.php
-#
 
-#
 # Colors.
-#
 COLOR_PREFIX="\x1b["
 COLOR_RESET=$COLOR_PREFIX"0m"
 COLOR_BLACK=$COLOR_PREFIX"0;30m"
@@ -22,22 +17,18 @@ COLOR_PURPLE=$COLOR_PREFIX"0;35m"
 COLOR_CYAN=$COLOR_PREFIX"0;36m"
 COLOR_LIGHT_GRAY=$COLOR_PREFIX"0;37m"
 
-#
 # Paths.
-#
 PATH_VPM_ROOT="/usr/local/bin"
 PATH_REPOSITORY=$PATH_VPM_ROOT"/.vpm"
 PATH_CACHE=$PATH_VPM_ROOT"/.vpm-cache"
 PATH_HOSTS="/etc/hosts"
 PATH_VHOSTS="/etc/apache2/extra/httpd-vhosts.conf"
 
-#
 # @global
 #
 # Serializes the registry into an array of project entries in the form of
 # "key":"path" string pair. This operation stores the array of project entries
 # into VPM_PROJECT_LIST and its length into VPM_PROJECT_LENGTH.
-#
 function VPM_SERIALIZE_REPOSITORY
 {
     # Reset global variable.
@@ -58,7 +49,6 @@ function VPM_SERIALIZE_REPOSITORY
     VPM_PROJECT_LENGTH=${#VPM_PROJECT_LIST[@]}
 }
 
-#
 # @global
 #
 # Parses a project entry in the form of "key":"path" string pair and stores
@@ -66,7 +56,6 @@ function VPM_SERIALIZE_REPOSITORY
 # respectively.
 #
 # @param $1 The "key":"path" string pair.
-#
 function VPM_DECODE_PROJECT_PAIR
 {
     if [ "$1" == "" ]; then return; fi
@@ -95,14 +84,12 @@ function VPM_DECODE_PROJECT_PAIR
     VPM_TMP_PROJECT_PATH="$p"
 }
 
-#
 # @global
 #
 # Looks up the vpm repo by key, index, or cache and stores the matching 
 # project pair globally.
 #
 # @param $1 Project key or index
-#
 function VPM_GET_PROJECT_PAIR
 {
     if [ "$1" == "" ]; then
@@ -127,13 +114,11 @@ function VPM_GET_PROJECT_PAIR
     fi
 }
 
-#
 # @global
 #
 # Looks up the vpm repo by key and stores the matching project pair globally.
 #
 # @param $1 Project key
-#
 function VPM_GET_PROJECT_PAIR_BY_ALIAS
 {
     if [ "$1" != "" ]; then
@@ -154,13 +139,11 @@ function VPM_GET_PROJECT_PAIR_BY_ALIAS
     VPM_TMP_PROJECT_PATH=""
 }
 
-#
 # @global
 #
 # Looks up the vpm repo by index and stores the matching project pair globally.
 #
 # @param $1 Project index
-#
 function VPM_GET_PROJECT_PAIR_BY_INDEX
 {
     if [ "$1" != "" ]; then
@@ -181,14 +164,12 @@ function VPM_GET_PROJECT_PAIR_BY_INDEX
     VPM_TMP_PROJECT_PATH=""
 }
 
-#
 # @global
 #
 # Looks up the vpm repo by path and stores the matching
 # project pair globally.
 #
 # @param $1 Project path
-#
 function VPM_GET_PROJECT_PAIR_BY_PATH
 {
     if [ "$1" != "" ]; then
@@ -209,11 +190,9 @@ function VPM_GET_PROJECT_PAIR_BY_PATH
     VPM_TMP_PROJECT_PATH=""
 }
 
-#
 # @global
 #
 # Stores the cached key globally.
-#
 function VPM_GET_CACHE
 {
     if [ -e $PATH_CACHE ]; then
@@ -223,13 +202,11 @@ function VPM_GET_CACHE
     fi
 }
 
-#
 # @global
 #
 # Writes the last used project key into cache.
 #
 # @param $1 Project key to be cached
-#
 function VPM_SET_CACHE
 {
     if [ "$1" == "" ]; then return; fi
@@ -248,9 +225,7 @@ function VPM_SET_CACHE
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Problem writing cache"
 }
 
-#
 # Opens the provided path in the preferred editor.
-#
 function VPM_EDIT
 {
     if [ "$1" == "" ]; then return; fi
@@ -270,9 +245,7 @@ function VPM_EDIT
     fi
 }
 
-#
 # Displays the vpm directory.
-#
 function vpm_directory
 {
     echo
@@ -283,9 +256,7 @@ function vpm_directory
     echo
 }
 
-#
 # Displays the vpm help directory.
-#
 function vpm_help_directory
 {
     echo
@@ -296,9 +267,7 @@ function vpm_help_directory
     echo
 }
 
-#
 # Echoes available vpm commands.
-#
 function vpm_show_commands
 {
     echo -e "${COLOR_CYAN}     add${COLOR_RESET} - Maps the current working directory to a project key."
@@ -314,9 +283,7 @@ function vpm_show_commands
     echo -e "${COLOR_CYAN} version${COLOR_RESET} - Shows the version of ${COLOR_BLUE}vpm${COLOR_RESET}."
 }
 
-#
 # Displays help documents regarding vpm.
-#
 function vpm_help
 {
     if [ "$1" == "" ] || [ "$1" == "-h" ]; then
@@ -378,9 +345,7 @@ function vpm_help
     echo
 }
 
-#
 # Shows the current cached project key.
-#
 function vpm_cache
 {
     VPM_GET_CACHE
@@ -392,13 +357,11 @@ function vpm_cache
     fi
 }
 
-#
 # Adds to the vpm the current directory associated with the specified project 
 # key.
 #
 # @param $1 Key of project. Leave blank or use "." to use the name of the
 #           current directory.
-#
 function vpm_add
 {
     # Help.
@@ -448,13 +411,11 @@ function vpm_add
     VPM_SET_CACHE $key
 }
 
-#
 # Navigates to the root path of a project in Terminal. Either specify a string 
 # representing the project key or a number prefixed by '#' representing the 
 # index.
 #
 # @param $1 Project key or index (prefixed by '#')
-#
 function vpm_cd
 {
     # Help.
@@ -479,9 +440,7 @@ function vpm_cd
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project with reference ${COLOR_CYAN}$1${COLOR_RESET} not found"
 }
 
-#
 # Cleans the current vpm list.
-#
 function vpm_clean
 {
     # Help.
@@ -515,9 +474,7 @@ function vpm_clean
     echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Reconciled $count project(s)"
 }
 
-#
 # Opens the vpm tool in the default text editor.
-#
 function vpm_edit
 {
     # Help.
@@ -532,9 +489,7 @@ function vpm_edit
     fi
 }
 
-#
 # Lists all the projects managed by vpm.
-#
 function vpm_list
 {
     # Help.
@@ -562,9 +517,7 @@ function vpm_list
     fi
 }
 
-#
 # Manages all the projects managed by vpm in the default text editor.
-#
 function vpm_manage
 {
     # Help.
@@ -575,12 +528,10 @@ function vpm_manage
     fi
 }
 
-#
 # Opens a project in Finder. Either specify a string representing the project 
 # key or a number representing the index.
 #
 # @param $1 Project key or index
-#
 function vpm_open
 {
     # Help.
@@ -607,13 +558,11 @@ function vpm_open
     fi
 }
 
-#
 # Removes a project from vpm. Either specify a string representing the project 
 # key or a number representing the index.
 #
 # @param $1 Project key or index. Leave blank or specify "." to use the name
 #           of the current directory.
-#
 function vpm_remove
 {
     # Help.
@@ -676,13 +625,11 @@ function vpm_remove
     echo -e $buffer > $PATH_REPOSITORY
 }
 
-#
 # Opens a project from vpm. Either specify a string representing the project 
 # key or a number representing the index.
 #
 # @param $1 Project extension
 # @param $2 Project key or index
-#
 function vpm_project
 {
     # Help.
@@ -741,9 +688,7 @@ function vpm_project
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project with reference ${COLOR_CYAN}$2${COLOR_RESET} not found"
 }
 
-#
 # Main process.
-#
 if   [ "$1" == "" ] || [ "$1" == "dir" ] || [ "$1" == "d" ] || [ "$1" == "-d" ];         then vpm_directory $2
 elif [ "$1" == "add" ] || [ "$1" == "a" ] || [ "$1" == "-a" ];                           then vpm_add $2
 elif [ "$1" == "cache" ];                                                                then vpm_cache $2
