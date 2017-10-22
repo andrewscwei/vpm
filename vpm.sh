@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.0.0"
+VPM_VERSION="1.1.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -246,6 +246,19 @@ function VPM_EDIT() {
   else
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}No editors available"
   fi
+}
+
+# @global
+#
+# Serves a path on Python's SimpleHTTPServer.
+#
+# @param $1 Path to serve.
+function VPM_SERVE() {
+	if VPM_HAS "python"; then
+		pushd $1; python -m SimpleHTTPServer $2; popd
+	else
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Python not found"
+	fi
 }
 
 # Shows the current cached project key.
@@ -504,7 +517,6 @@ function vpm_remove() {
 # Opens a project from vpm. Either specify a string representing the project
 # key or a number representing the index.
 #
-# @param $1 Project extension
 # @param $2 Project key or index
 function vpm_project() {
 	# Help.
@@ -563,6 +575,43 @@ function vpm_project() {
 	echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}Project with reference ${COLOR_CYAN}$2${COLOR_RESET} not found"
 }
 
+# Serves a project to localhost:8000.
+#
+# @param [$1] Project key or index.
+# @param [$2] Port
+function vpm_serve() {
+	# Help.
+	if [ "$1" == "-h" ]; then
+		vpm_help "cd"
+		return
+	fi
+
+	if [ "$1" == "-r" ]; then
+		cd $PATH_VPM_ROOT
+		return
+	fi
+
+	VPM_GET_PROJECT_PAIR $1
+
+	local p="$(pwd)"
+
+	if [ "$VPM_TMP_PROJECT_ALIAS" != "" ]; then
+		p=$VPM_TMP_PROJECT_PATH
+	fi
+
+	echo $p
+
+	if [ -d "$p/www" ]; then
+		VPM_SERVE "$p/www" $2
+	elif [ -d "$p/public" ]; then
+		VPM_SERVE "$p/public" $2
+	elif [ -d "$p/dist" ]; then
+		VPM_SERVE "$p/dist" $2
+	else
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}No servable directory found in ${COLOR_CYAN}$p${COLOR_RESET} (seeking ${COLOR_CYAN}www${COLOR_RESET}, ${COLOR_CYAN}public${COLOR_RESET} and ${COLOR_CYAN}dist${COLOR_RESET} respectively)"
+	fi
+}
+
 # Displays the vpm directory.
 function vpm_directory() {
 	echo
@@ -593,6 +642,7 @@ function vpm_show_commands() {
 	echo -e "${COLOR_CYAN}    list${COLOR_RESET} - Lists all current projects managed by vpm."
 	echo -e "${COLOR_CYAN} project${COLOR_RESET} - Opens a vpm project in designated IDE (supports Xcode/Sublime/Atom in respective priority)."
 	echo -e "${COLOR_CYAN}  remove${COLOR_RESET} - Removes a vpm project from the vpm registry."
+	echo -e "${COLOR_CYAN}   serve${COLOR_RESET} - Serves a vpm project (looks for www/public/dist folder in project root in respective priority)."
 }
 
 # Displays help documents regarding vpm.
@@ -639,6 +689,11 @@ function vpm_help() {
 		echo
 		echo -e "Removes a project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} from the vpm registry."
 
+	elif [ "$1" == "serve" ] || [ "$1" == "srv" ] || [ "$1" == "s"]; then
+		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}serve <project_alias_or_index>${COLOR_RESET}"
+		echo
+		echo -e "Serves a project to localhost specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} from the vpm registry."
+
 	else
 		echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_RESET}No help data available regarding ${COLOR_RED}$1${COLOR_RESET} at this point"
 	fi
@@ -658,6 +713,7 @@ elif [ "$1" == "edit" ] || [ "$1" == "e" ];                          then vpm_ed
 elif [ "$1" == "open" ] || [ "$1" == "o" ];                          then vpm_open $2
 elif [ "$1" == "remove" ] || [ "$1" == "rm" ] || [ "$1" == "r" ];    then vpm_remove $2
 elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "p" ]; then vpm_project $2
+elif [ "$1" == "serve" ] || [ "$1" == "srv" ] || [ "$1" == "s" ];    then vpm_serve $2 $3
 elif [ "$1" == "-v" ];                                               then echo -e "v$VPM_VERSION"
 else echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
 fi

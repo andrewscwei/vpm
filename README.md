@@ -17,13 +17,13 @@ From now on you can just run `vpm cd my_app` to navigate to that project directl
 Install vpm via cURL:
 
 ```sh
-curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v1.0.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v1.1.0/install.sh | bash
 ```
 
 or Wget: 
 
 ```sh
-wget -qO- https://raw.githubusercontent.com/andrewscwei/vpm/v1.0.0/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/andrewscwei/vpm/v1.1.0/install.sh | bash
 ```
 
 ## Commands
@@ -40,6 +40,7 @@ where <command> is one of:
     list - Lists all current projects managed by vpm.
  project - Opens a vpm project in designated IDE (supports Xcode/Sublime/Atom in respective priority).
   remove - Removes a vpm project from the vpm registry.
+   serve - Serves a vpm project (looks for www/public/dist folder in project root in respective priority).
 ```
 
 ### `vpm add <project_key>`
