@@ -3,7 +3,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.1.0"
+VPM_VERSION="1.2.0"
 VPM_SOURCE=https://raw.githubusercontent.com/andrewscwei/vpm/v$VPM_VERSION/vpm.sh
 
 # Colors.
@@ -59,14 +59,14 @@ function vpm_install() {
   mkdir -p "$dest"
 
   if [ -f "$dest/vpm.sh" ]; then
-  	echo -e "${COLOR_BLUE}vpm: vpm ${COLOR_ORANGE}is already installed in ${COLOR_CYAN}$dest${COLOR_ORANGE}, updating it instead...${COLOR_RESET}"
+    echo -e "${COLOR_BLUE}vpm: vpm ${COLOR_ORANGE}is already installed in ${COLOR_CYAN}$dest${COLOR_ORANGE}, updating it instead...${COLOR_RESET}"
   else
-  	echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Downloading ${COLOR_BLUE}vpm${COLOR_RESET} to ${COLOR_CYAN}$dest${COLOR_RESET}"
+    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Downloading ${COLOR_BLUE}vpm${COLOR_RESET} to ${COLOR_CYAN}$dest${COLOR_RESET}"
   fi
 
   # Download the script.
   vpm_download_command -s "$VPM_SOURCE" -o "$dest/vpm.sh" || {
-  	echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}Failed to download from ${COLOR_CYAN}$VPM_SOURCE${COLOR_RESET}"
+    echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}Failed to download from ${COLOR_CYAN}$VPM_SOURCE${COLOR_RESET}"
     return 1
   } &
   for job in $(jobs -p | sort)
@@ -76,7 +76,7 @@ function vpm_install() {
   
   # Make script executable.
   chmod a+x "$dest/vpm.sh" || {
-  	echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}Failed to mark ${COLOR_CYAN}$dest/vpm.sh${COLOR_RESET} as executable"
+    echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}Failed to mark ${COLOR_CYAN}$dest/vpm.sh${COLOR_RESET} as executable"
     return 3
   }
 }
