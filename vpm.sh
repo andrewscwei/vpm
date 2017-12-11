@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.4.0"
+VPM_VERSION="1.5.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -348,7 +348,13 @@ function vpm_cd() {
     cd "$VPM_TMP_PROJECT_PATH"
 
     if VPM_HAS "nvm" && [ -f $VPM_TMP_PROJECT_PATH/.nvmrc ]; then
+      echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Using project ${COLOR_CYAN}.nvmrc${COLOR_RESET} file"
       nvm use
+    fi
+
+    if [ -f $VPM_TMP_PROJECT_PATH/.env ]; then
+      echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Using project ${COLOR_CYAN}.env${COLOR_RESET} file"
+      source $VPM_TMP_PROJECT_PATH/.env
     fi
 
     return
