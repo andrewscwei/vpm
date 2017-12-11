@@ -346,6 +346,11 @@ function vpm_cd() {
   if [ "$VPM_TMP_PROJECT_ALIAS" != "" ]; then
     VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
     cd "$VPM_TMP_PROJECT_PATH"
+
+    if VPM_HAS "nvm"; then
+      nvm use
+    fi
+
     return
   fi
 
