@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.2.0"
+VPM_VERSION="1.4.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -347,7 +347,7 @@ function vpm_cd() {
     VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
     cd "$VPM_TMP_PROJECT_PATH"
 
-    if VPM_HAS "nvm"; then
+    if VPM_HAS "nvm" && [ -f $VPM_TMP_PROJECT_PATH/.nvmrc ]; then
       nvm use
     fi
 
