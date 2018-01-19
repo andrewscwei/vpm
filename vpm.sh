@@ -593,7 +593,7 @@ function vpm_project() {
 function vpm_serve() {
   # Help.
   if [ "$1" == "-h" ]; then
-    vpm_help "cd"
+    vpm_help "serve"
     return
   fi
 
@@ -609,8 +609,6 @@ function vpm_serve() {
   if [ "$VPM_TMP_PROJECT_ALIAS" != "" ]; then
     p=$VPM_TMP_PROJECT_PATH
   fi
-
-  echo $p
 
   if [ -d "$p/www" ]; then
     VPM_SERVE "$p/www" $2
