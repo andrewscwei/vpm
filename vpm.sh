@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.5.0"
+VPM_VERSION="1.6.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -31,7 +31,7 @@ PATH_HOSTS="/etc/hosts"
 PATH_VHOSTS="/etc/apache2/extra/httpd-vhosts.conf"
 
 # @global
-# 
+#
 # Checks if a command is available
 #
 # @param $1 Name of the command.
@@ -555,6 +555,10 @@ function vpm_project() {
         fi
         # If *.sublime-project is found, store it temporarily until another
         # project file with higher priority is found.
+      elif [[ "$file" == *".gradle" ]]; then
+        echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Found Android Studio project, opening project ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET} with ${COLOR_CYAN}Android Studio${COLOR_RESET}"
+        open -a /Applications/Android\ Studio.app $VPM_TMP_PROJECT_PATH
+        return
       elif [[ "$file" == *"sublime-project" ]]; then
         if [[ "$TARGET_PROJECT_FILE" != *"xcworkspace" ]] && [[ "$TARGET_PROJECT_FILE" != *"xcodeproj" ]]; then
           TARGET_PROJECT_FILE="$file"

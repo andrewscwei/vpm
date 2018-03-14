@@ -3,7 +3,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.5.0"
+VPM_VERSION="1.6.0"
 VPM_SOURCE=https://raw.githubusercontent.com/andrewscwei/vpm/v$VPM_VERSION/vpm.sh
 
 # Colors.
@@ -19,7 +19,7 @@ COLOR_CYAN=$COLOR_PREFIX"0;36m"
 COLOR_LIGHT_GRAY=$COLOR_PREFIX"0;37m"
 
 # @global
-# 
+#
 # Checks if a command is available
 #
 # @param $1 Name of the command.
@@ -28,8 +28,8 @@ function VPM_HAS() {
 }
 
 # @global
-# 
-# Gets the default install path. This can be overridden when calling the 
+#
+# Gets the default install path. This can be overridden when calling the
 # download script by passing the VPM_DIR variable.
 function VPM_INSTALL_DIR() {
   printf %s "${VPM_DIR:-"$HOME/.vpm"}"
@@ -73,7 +73,7 @@ function vpm_install() {
   do
     wait "$job" || return $?
   done
-  
+
   # Make script executable.
   chmod a+x "$dest/vpm.sh" || {
     echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}Failed to mark ${COLOR_CYAN}$dest/vpm.sh${COLOR_RESET} as executable"
