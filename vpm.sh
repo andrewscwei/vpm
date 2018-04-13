@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.6.0"
+VPM_VERSION="1.7.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -255,7 +255,8 @@ function VPM_EDIT() {
 # @param $1 Path to serve.
 function VPM_SERVE() {
   if VPM_HAS "python"; then
-    pushd $1; python -m SimpleHTTPServer $2; popd
+    local port=$([ "$2" == "" ] && echo "8080" || echo "$2")
+    pushd $1; python -m SimpleHTTPServer $port; popd
   else
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Python not found"
   fi
@@ -620,6 +621,8 @@ function vpm_serve() {
     VPM_SERVE "$p/public" $2
   elif [ -d "$p/dist" ]; then
     VPM_SERVE "$p/dist" $2
+  elif [ -d "$p/build" ]; then
+    VPM_SERVE "$p/build" $2
   else
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}No servable directory found in ${COLOR_CYAN}$p${COLOR_RESET} (seeking ${COLOR_CYAN}www${COLOR_RESET}, ${COLOR_CYAN}public${COLOR_RESET} and ${COLOR_CYAN}dist${COLOR_RESET} respectively)"
   fi
