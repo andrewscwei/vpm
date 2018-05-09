@@ -3,7 +3,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.7.0"
+VPM_VERSION="1.8.0"
 VPM_SOURCE=https://raw.githubusercontent.com/andrewscwei/vpm/v$VPM_VERSION/vpm.sh
 
 # Colors.
@@ -103,7 +103,7 @@ function main() {
   elif [ -f "$HOME/.bash_profile" ]; then
     profile="$HOME/.bash_profile"
   else
-    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Profile not found, tried ${COLOR_CYAN}~/.profile${COLOR_RESET}, ${COLOR_CYAN}~/.bashrc${COLOR_RESET} and ${COLOR_CYAN}~/.base_profile${COLOR_RESET}"
+    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Profile not found, tried ${COLOR_CYAN}~/.profile${COLOR_RESET}, ${COLOR_CYAN}~/.bashrc${COLOR_RESET} and ${COLOR_CYAN}~/.bash_profile${COLOR_RESET}"
     echo -e "     Create one of them and run this script again"
     echo -e "     OR"
     echo -e "     Append the following lines to the correct file yourself:"
