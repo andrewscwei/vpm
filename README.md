@@ -17,13 +17,13 @@ From now on you can just run `vpm cd my_app` to navigate to that project directl
 Install vpm via cURL:
 
 ```sh
-curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v1.9.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v2.0.0/install.sh | bash
 ```
 
 or Wget:
 
 ```sh
-wget -qO- https://raw.githubusercontent.com/andrewscwei/vpm/v1.9.0/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/andrewscwei/vpm/v2.0.0/install.sh | bash
 ```
 
 ## Commands
