@@ -412,10 +412,12 @@ function vpm_list() {
     for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
       local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
       local pair=${VPM_PROJECT_LIST[$idx]}
+      local len=${#i}
+      local tab=$(printf '%*s' "(5 - $len)" | tr ' ' " ")
 
       VPM_DECODE_PROJECT_PAIR "$pair"
 
-      echo -e "    $i. ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}: $VPM_TMP_PROJECT_PATH"
+      echo -e "$tab$i. ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}: $VPM_TMP_PROJECT_PATH"
     done
   fi
 }
