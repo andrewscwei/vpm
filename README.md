@@ -1,29 +1,24 @@
 # VARS Project Manager (vpm)
 
-> Command line spotlight for managing local projects.
+> Switch between projects quickly in the command line
 
-`vpm` is a CLI tool that lets you access a folder in your file system with one simple command. `vpm` is designed to help you access code repos quickly.
+`vpm` is a CLI tool that lets you access paths in your file system with a single command. It is designed to help you switch between repos quickly.
 
 ## TL;DR
 
-1. Let `vpm` know about your directory:
-  1. From Terminal, you `cd` to the directory of your repo
-  2. Run `vpm add <project_key>` to add the current directory to the `vpm` registry, where `<project_key>` is the key you wish to use to name this project. Later on you will be using this key to access your projects from anywhere in the Terminal. i.e. `vpm add my_app`.
+First you need to teach `vpm` where to look for your projects:
 
-From now on you can just run `vpm cd my_app` to navigate to that project directly from Terminal. Better yet, you can run `vpm project my_app` (or `vpm p my_app` for short) to immediate open it with your default text editor (`vpm` scans for Xcode project files first then falls back to VSCode/Sublime/Atom/TextMate respectively, depending on which editor is installed in your system).
+1. From Terminal, `cd` to the directory of a repo.
+2. Run `vpm add <project_key>` to add the current directory to the `vpm` registry, where `<project_key>` is the key you wish to use to name this project.
+
+From now on you can just run `vpm cd <project_key>` to navigate to that project directly from Terminal. Better yet, you can run `vpm project <project_key>` (or `vpm p <project_key>` for short) to immediate open it with your default text editor (`vpm` scans for Xcode project files and Android Studio projects first then falls back to VSCode/Sublime/Atom/TextMate respectively, depending on which editor is installed in your system).
 
 ## Usage
 
 Install vpm via cURL:
 
 ```sh
-curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v2.1.0/install.sh | bash
-```
-
-or Wget:
-
-```sh
-wget -qO- https://raw.githubusercontent.com/andrewscwei/vpm/v2.1.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v2.2.0/install.sh | bash
 ```
 
 ## Commands
