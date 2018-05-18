@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-{ # This ensures the entire script is downloaded #
+{ # This ensures the entire script is downloaded
 
 # Config.
-VPM_VERSION="2.0.0"
+VPM_VERSION="2.1.0"
 VPM_SOURCE=https://raw.githubusercontent.com/andrewscwei/vpm/v$VPM_VERSION/vpm.sh
 
 # Colors.
@@ -68,11 +68,7 @@ function vpm_install() {
   vpm_download_command -s "$VPM_SOURCE" -o "$dest/vpm.sh" || {
     echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}Failed to download from ${COLOR_CYAN}$VPM_SOURCE${COLOR_RESET}"
     return 1
-  } &
-  for job in $(jobs -p | sort)
-  do
-    wait "$job" || return $?
-  done
+  }
 
   # Make script executable.
   chmod a+x "$dest/vpm.sh" || {
@@ -144,4 +140,4 @@ function main() {
 
 main
 
-} # This ensures the entire script is downloaded #
+} # This ensures the entire script is downloaded
