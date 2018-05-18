@@ -47,7 +47,7 @@ Changes the working directory to the working directory of a `vpm` project.
 ### `vpm list`
 Lists all current projects managed by `vpm`
 
-### `vpm project <project_key_or_index`
+### `vpm project <project_key_or_index>`
 Opens a `vpm` project in designated IDE (supports Xcode/Sublime in respective priority).
 
 ### `vpm remove <project_key_or_index>`
