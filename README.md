@@ -55,7 +55,7 @@ Removes a `vpm` project from the `vpm` registry. If you don't specify a project 
 
 > Whenever you run a command that expects a project key or index, you can optionally leave the key or index blank. The command will then use key that was last used. You can run `vpm cache` to see what the last iterated project is.
 
-> > Whenever you run a command that expects a project key or index, you can use `.` to refer to the working directory (`pwd`).
+> Whenever you run a command that expects a project key or index, you can use `.` to refer to the working directory (`pwd`).
 
 > Most commands have equivalent short notations. For example, instead of doing `vpm project` you can do `vpm p`.
 
