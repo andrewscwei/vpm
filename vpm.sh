@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.8.0"
+VPM_VERSION="1.9.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -353,10 +353,10 @@ function vpm_cd() {
       nvm use
     fi
 
-    if [ -f $VPM_TMP_PROJECT_PATH/.env ]; then
-      echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Using project ${COLOR_CYAN}.env${COLOR_RESET} file"
-      source $VPM_TMP_PROJECT_PATH/.env
-    fi
+    # if [ -f $VPM_TMP_PROJECT_PATH/.env ]; then
+    #   echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Using project ${COLOR_CYAN}.env${COLOR_RESET} file"
+    #   source $VPM_TMP_PROJECT_PATH/.env
+    # fi
 
     return
   fi
