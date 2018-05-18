@@ -3,7 +3,7 @@
 { # This ensures the entire script is downloaded
 
 # Config.
-VPM_VERSION="2.1.0"
+VPM_VERSION="2.2.0"
 VPM_SOURCE=https://raw.githubusercontent.com/andrewscwei/vpm/v$VPM_VERSION/vpm.sh
 
 # Colors.
@@ -35,23 +35,6 @@ function VPM_INSTALL_DIR() {
   printf %s "${VPM_DIR:-"$HOME/.vpm"}"
 }
 
-# Download command (curl or wget).
-function vpm_download_command() {
-  if VPM_HAS "curl"; then
-    curl --compressed -q "$@"
-  elif VPM_HAS "wget"; then
-    # Emulate curl with wget
-    ARGS=$(echo "$*" | command sed -e 's/--progress-bar /--progress=bar /' \
-                                   -e 's/-L //' \
-                                   -e 's/--compressed //' \
-                                   -e 's/-I /--server-response /' \
-                                   -e 's/-s /-q /' \
-                                   -e 's/-o /-O /' \
-                                   -e 's/-C - /-c /')
-    eval wget $ARGS
-  fi
-}
-
 # Installs vpm as a script.
 function vpm_install() {
   local dest="$(VPM_INSTALL_DIR)"
@@ -65,7 +48,7 @@ function vpm_install() {
   fi
 
   # Download the script.
-  vpm_download_command -s "$VPM_SOURCE" -o "$dest/vpm.sh" || {
+  curl --compressed -q -s "$VPM_SOURCE" -o "$dest/vpm.sh" || {
     echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}Failed to download from ${COLOR_CYAN}$VPM_SOURCE${COLOR_RESET}"
     return 1
   }
@@ -80,10 +63,10 @@ function vpm_install() {
 # Main process
 function main() {
   # Download and install the script.
-  if VPM_HAS vpm_download_command; then
+  if VPM_HAS curl; then
     vpm_install
   else
-    echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}You need ${COLOR_CYAN}curl${COLOR_RED} or ${COLOR_CYAN}wget${COLOR_RED} to install ${COLOR_BLUE}vpm${COLOR_RESET}"
+    echo >&2 "${COLOR_BLUE}vpm: ${COLOR_RED}You need ${COLOR_CYAN}curl${COLOR_RED} to install ${COLOR_BLUE}vpm${COLOR_RESET}"
     exit 1
   fi
 
