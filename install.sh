@@ -3,7 +3,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="1.9.0"
+VPM_VERSION="2.0.0"
 VPM_SOURCE=https://raw.githubusercontent.com/andrewscwei/vpm/v$VPM_VERSION/vpm.sh
 
 # Colors.
@@ -91,19 +91,26 @@ function main() {
     exit 1
   fi
 
-  # Edit profile file to set up vpm.
+  # Edit Bash and ZSH profile files to set up vpm.
   local dest="$(VPM_INSTALL_DIR)"
-  local profile=''
+  local bashprofile=""
+  local zshprofile=""
   local sourcestr="\nalias vpm='. ${dest}/vpm.sh'\n"
 
-  if [ -f "$HOME/.profile" ]; then
-    profile="$HOME/.profile"
-  elif [ -f "$HOME/.bashrc" ]; then
-    profile="$HOME/.bashrc"
+  if [ -f "$HOME/.bashrc" ]; then
+    bashprofile="$HOME/.bashrc"
+  elif [ -f "$HOME/.profile" ]; then
+    bahsprofile="$HOME/.profile"
   elif [ -f "$HOME/.bash_profile" ]; then
-    profile="$HOME/.bash_profile"
-  else
-    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Profile not found, tried ${COLOR_CYAN}~/.profile${COLOR_RESET}, ${COLOR_CYAN}~/.bashrc${COLOR_RESET} and ${COLOR_CYAN}~/.bash_profile${COLOR_RESET}"
+    bashprofile="$HOME/.bash_profile"
+  fi
+
+  if [ -f "$HOME/.zshrc" ]; then
+    zshprofile="$HOME/.zshrc"
+  fi
+
+  if [ "$bashprofile" == ""] && [ "$zshprofile" == ""]; then
+    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Bash profile not found, tried ${COLOR_CYAN}~/.bashrc${COLOR_RESET}, ${COLOR_CYAN}~/.zshrc${COLOR_RESET}, ${COLOR_CYAN}~/.profile${COLOR_RESET} and ${COLOR_CYAN}~/.bash_profile${COLOR_RESET}"
     echo -e "     Create one of them and run this script again"
     echo -e "     OR"
     echo -e "     Append the following lines to the correct file yourself:"
@@ -111,11 +118,22 @@ function main() {
     exit 1
   fi
 
-  if ! command grep -qc '/vpm.sh' "$profile"; then
-    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Appending ${COLOR_BLUE}vpm${COLOR_RESET} source string to ${COLOR_CYAN}$profile${COLOR_RESET}"
-    command printf "${sourcestr}" >> "$profile"
-  else
-    echo -e "${COLOR_BLUE}vpm: vpm ${COLOR_RESET}source string is already in ${COLOR_CYAN}$profile${COLOR_RESET}"
+  if [ "$bashprofile" != ""]; then
+    if ! command grep -qc '/vpm.sh' "$bashprofile"; then
+      echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Appending ${COLOR_BLUE}vpm${COLOR_RESET} source string to ${COLOR_CYAN}$bashprofile${COLOR_RESET}"
+      command printf "${sourcestr}" >> "$bashprofile"
+    else
+      echo -e "${COLOR_BLUE}vpm: vpm ${COLOR_RESET}source string is already in ${COLOR_CYAN}$bashprofile${COLOR_RESET}"
+    fi
+  fi
+
+  if [ "$zshprofile" != ""]; then
+    if ! command grep -qc '/vpm.sh' "$zshprofile"; then
+      echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Appending ${COLOR_BLUE}vpm${COLOR_RESET} source string to ${COLOR_CYAN}$zshprofile${COLOR_RESET}"
+      command printf "${sourcestr}" >> "$zshprofile"
+    else
+      echo -e "${COLOR_BLUE}vpm: vpm ${COLOR_RESET}source string is already in ${COLOR_CYAN}$zshprofile${COLOR_RESET}"
+    fi
   fi
 
   # Source vpm

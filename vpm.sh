@@ -24,7 +24,7 @@ COLOR_CYAN=$COLOR_PREFIX"0;36m"
 COLOR_LIGHT_GRAY=$COLOR_PREFIX"0;37m"
 
 # Paths.
-PATH_VPM_ROOT="${BASH_SOURCE%/*}"
+PATH_VPM_ROOT=$(dirname ${BASH_SOURCE[0]-$0})
 PATH_REPOSITORY=$PATH_VPM_ROOT"/registry"
 PATH_CACHE=$PATH_VPM_ROOT"/registry-cache"
 PATH_HOSTS="/etc/hosts"
@@ -72,27 +72,18 @@ function VPM_SERIALIZE_REPOSITORY() {
 function VPM_DECODE_PROJECT_PAIR() {
   if [ "$1" == "" ]; then return; fi
 
-  # Configure IFS to split the pair appropriately while preserving
-  # whitespaces.
-  OIFS=$IFS
-  IFS=":"
-
-  # Grab the key from the "key":"path" string pair.
-  local a=($1)
-  local n=${a[0]}
-  local p=${a[1]}
-
-  # Restore IFS.
-  IFS=$OIFS
+  # Grab the key and path from the "key":"path" string pair.
+  local k=$(echo $1 | cut -d':' -f1)
+  local p=$(echo $1 | cut -d':' -f2)
 
   # Filter out quotations.
-  n=${n//\"/}
-  n=${n//\'/}
+  k=${k//\"/}
+  k=${k//\'/}
   p=${p//\"/}
   p=${p//\'/}
 
   # Store the key and path globally.
-  VPM_TMP_PROJECT_ALIAS="$n"
+  VPM_TMP_PROJECT_ALIAS="$k"
   VPM_TMP_PROJECT_PATH="$p"
 }
 
@@ -136,7 +127,8 @@ function VPM_GET_PROJECT_PAIR_BY_ALIAS() {
 
     # Iterate through the list of projects.
     for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
-      VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$((i - 1))]}"
+      local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
+      VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$idx]}"
 
       if [ "$VPM_TMP_PROJECT_ALIAS" == "$1" ]; then
         return
@@ -159,7 +151,8 @@ function VPM_GET_PROJECT_PAIR_BY_INDEX() {
 
     # Iterate through the list of projects.
     for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
-      VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$((i - 1))]}"
+      local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
+      VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$idx]}"
 
       if (($i == $1)); then
         return
@@ -183,7 +176,8 @@ function VPM_GET_PROJECT_PAIR_BY_PATH() {
 
     # Iterate through the list of projects.
     for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
-      VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$((i - 1))]}"
+      local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
+      VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$idx]}"
 
       if [ "$VPM_TMP_PROJECT_PATH" == "$1" ]; then
         return
@@ -216,7 +210,8 @@ function VPM_SET_CACHE() {
 
   # Iterate through the list of projects.
   for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
-    VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$((i - 1))]}"
+    local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
+    VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$idx]}"
 
     if [ "$VPM_TMP_PROJECT_ALIAS" == "$1" ]; then
       echo -e $1 >$PATH_CACHE
@@ -298,7 +293,8 @@ function vpm_add() {
 
   # Iterate through the list of projects.
   for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
-    local pair=${VPM_PROJECT_LIST[$((i - 1))]}
+    local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
+    local pair=${VPM_PROJECT_LIST[$idx]}
 
     VPM_DECODE_PROJECT_PAIR "$pair"
 
@@ -379,7 +375,8 @@ function vpm_clean() {
 
   # Iterate through the list of projects.
   for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
-    local pair=${VPM_PROJECT_LIST[$((i - 1))]}
+    local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
+    local pair=${VPM_PROJECT_LIST[$idx]}
 
     VPM_DECODE_PROJECT_PAIR "$pair"
 
@@ -413,7 +410,8 @@ function vpm_list() {
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Found ${COLOR_PURPLE}$VPM_PROJECT_LENGTH${COLOR_RESET} project(s) in the registry"
 
     for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
-      local pair=${VPM_PROJECT_LIST[$((i - 1))]}
+      local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
+      local pair=${VPM_PROJECT_LIST[$idx]}
 
       VPM_DECODE_PROJECT_PAIR "$pair"
 
@@ -488,7 +486,8 @@ function vpm_remove() {
 
   # Iterate through the list of projects.
   for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
-    local pair=${VPM_PROJECT_LIST[$((i - 1))]}
+    local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
+    local pair=${VPM_PROJECT_LIST[$idx]}
     local skip=0
 
     VPM_DECODE_PROJECT_PAIR "$pair"
