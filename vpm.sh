@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="2.2.0"
+VPM_VERSION="2.3.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -70,7 +70,7 @@ function VPM_SERIALIZE_REPOSITORY() {
 #
 # @param $1 The "key":"path" string pair.
 function VPM_DECODE_PROJECT_PAIR() {
-  if [ "$1" == "" ]; then return; fi
+  if [[ "$1" == "" ]]; then return; fi
 
   # Grab the key and path from the "key":"path" string pair.
   local k=$(echo $1 | cut -d':' -f1)
@@ -94,14 +94,14 @@ function VPM_DECODE_PROJECT_PAIR() {
 #
 # @param $1 Project key or index
 function VPM_GET_PROJECT_PAIR() {
-  if [ "$1" == "" ]; then
+  if [[ "$1" == "" ]]; then
     VPM_GET_CACHE
     VPM_GET_PROJECT_PAIR_BY_ALIAS $VPM_PROJECT_CACHE
     return
   fi
 
   # . means get the project key from cache.
-  if [ "$1" == "." ]; then
+  if [[ "$1" == "." ]]; then
     VPM_GET_PROJECT_PAIR_BY_PATH "$(pwd)"
     return
   fi
@@ -122,7 +122,7 @@ function VPM_GET_PROJECT_PAIR() {
 #
 # @param $1 Project key
 function VPM_GET_PROJECT_PAIR_BY_ALIAS() {
-  if [ "$1" != "" ]; then
+  if [[ "$1" != "" ]]; then
     VPM_SERIALIZE_REPOSITORY
 
     # Iterate through the list of projects.
@@ -130,7 +130,7 @@ function VPM_GET_PROJECT_PAIR_BY_ALIAS() {
       local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
       VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$idx]}"
 
-      if [ "$VPM_TMP_PROJECT_ALIAS" == "$1" ]; then
+      if [[ "$VPM_TMP_PROJECT_ALIAS" == "$1" ]]; then
         return
       fi
     done
@@ -146,7 +146,7 @@ function VPM_GET_PROJECT_PAIR_BY_ALIAS() {
 #
 # @param $1 Project index
 function VPM_GET_PROJECT_PAIR_BY_INDEX() {
-  if [ "$1" != "" ]; then
+  if [[ "$1" != "" ]]; then
     VPM_SERIALIZE_REPOSITORY
 
     # Iterate through the list of projects.
@@ -171,7 +171,7 @@ function VPM_GET_PROJECT_PAIR_BY_INDEX() {
 #
 # @param $1 Project path
 function VPM_GET_PROJECT_PAIR_BY_PATH() {
-  if [ "$1" != "" ]; then
+  if [[ "$1" != "" ]]; then
     VPM_SERIALIZE_REPOSITORY
 
     # Iterate through the list of projects.
@@ -179,7 +179,7 @@ function VPM_GET_PROJECT_PAIR_BY_PATH() {
       local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
       VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$idx]}"
 
-      if [ "$VPM_TMP_PROJECT_PATH" == "$1" ]; then
+      if [[ "$VPM_TMP_PROJECT_PATH" == "$1" ]]; then
         return
       fi
     done
@@ -206,14 +206,14 @@ function VPM_GET_CACHE() {
 #
 # @param $1 Project key to be cached
 function VPM_SET_CACHE() {
-  if [ "$1" == "" ]; then return; fi
+  if [[ "$1" == "" ]]; then return; fi
 
   # Iterate through the list of projects.
   for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
     local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
     VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$idx]}"
 
-    if [ "$VPM_TMP_PROJECT_ALIAS" == "$1" ]; then
+    if [[ "$VPM_TMP_PROJECT_ALIAS" == "$1" ]]; then
       echo -e $1 >$PATH_CACHE
       return
     fi
@@ -228,7 +228,7 @@ function VPM_SET_CACHE() {
 #
 # @param $1 Path to open.
 function VPM_EDIT() {
-  if [ "$1" == "" ]; then return; fi
+  if [[ "$1" == "" ]]; then return; fi
 
   if VPM_HAS "code"; then
     code "$1"
@@ -261,7 +261,7 @@ function VPM_SERVE() {
 function vpm_cache() {
   VPM_GET_CACHE
 
-  if [ "$VPM_PROJECT_CACHE" == "" ]; then
+  if [[ "$VPM_PROJECT_CACHE" == "" ]]; then
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}The cache is empty"
   else
     echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Current project in cache: ${COLOR_CYAN}$VPM_PROJECT_CACHE${COLOR_RESET}"
@@ -275,7 +275,7 @@ function vpm_cache() {
 #             current directory.
 function vpm_add() {
   # Help.
-  if [ "$1" == "-h" ]; then
+  if [[ "$1" == "-h" ]]; then
     vpm_help "add"
     return
   fi
@@ -287,7 +287,7 @@ function vpm_add() {
   local buffer=""
   local check=0
 
-  if [ "$key" == "" ] || [ "$key" == "." ]; then
+  if [[ "$key" == "" ]] || [[ "$key" == "." ]]; then
     key="${PWD##*/}"
   fi
 
@@ -299,7 +299,7 @@ function vpm_add() {
     VPM_DECODE_PROJECT_PAIR "$pair"
 
     # If the specified project key already exists...
-    if [ "$VPM_TMP_PROJECT_ALIAS" == "$key" ]; then
+    if [[ "$VPM_TMP_PROJECT_ALIAS" == "$key" ]]; then
       check=1
       buffer="$buffer$VPM_TMP_PROJECT_ALIAS:${dir}\n"
       # Else just add the current line to the output buffer.
@@ -328,26 +328,26 @@ function vpm_add() {
 # @param $1 Project key or index
 function vpm_cd() {
   # Help.
-  if [ "$1" == "-h" ]; then
+  if [[ "$1" == "-h" ]]; then
     vpm_help "cd"
     return
   fi
 
-  if [ "$1" == "-r" ]; then
+  if [[ "$1" == "-r" ]]; then
     cd $PATH_VPM_ROOT
     return
   fi
 
   VPM_GET_PROJECT_PAIR $1
 
-  if [ "$VPM_TMP_PROJECT_ALIAS" != "" ]; then
+  if [[ "$VPM_TMP_PROJECT_ALIAS" != "" ]]; then
     VPM_SET_CACHE $VPM_TMP_PROJECT_ALIAS
     cd "$VPM_TMP_PROJECT_PATH"
 
-    if VPM_HAS "nvm" && [ -f $VPM_TMP_PROJECT_PATH/.nvmrc ]; then
-      echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Using project ${COLOR_CYAN}.nvmrc${COLOR_RESET} file"
-      nvm use
-    fi
+    # if VPM_HAS "nvm" && [ -f $VPM_TMP_PROJECT_PATH/.nvmrc ]; then
+    #   echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Using project ${COLOR_CYAN}.nvmrc${COLOR_RESET} file"
+    #   nvm use
+    # fi
 
     # if [ -f $VPM_TMP_PROJECT_PATH/.env ]; then
     #   echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Using project ${COLOR_CYAN}.env${COLOR_RESET} file"
@@ -363,7 +363,7 @@ function vpm_cd() {
 # Tidies up the registry file, removing blank lines and fixing bad formatting.
 function vpm_clean() {
   # Help.
-  if [ "$1" == "-h" ]; then
+  if [[ "$1" == "-h" ]]; then
     vpm_help "clean"
     return
   fi
@@ -382,7 +382,7 @@ function vpm_clean() {
 
     # Store entry in buffer if it is valid. If invalid it will not be
     # recorded, thus 'cleaned'.
-    if [ "$pair" != "" ] && [ "$VPM_TMP_PROJECT_ALIAS" != "" ] && [ "$VPM_TMP_PROJECT_PATH" != "" ]; then
+    if [[ "$pair" != "" ]] && [[ "$VPM_TMP_PROJECT_ALIAS" != "" ]] && [[ "$VPM_TMP_PROJECT_PATH" != "" ]]; then
       buffer="$buffer$pair\n"
     else
       count=$((count + 1))
@@ -396,7 +396,7 @@ function vpm_clean() {
 # Lists all the projects managed by vpm.
 function vpm_list() {
   # Help.
-  if [ "$1" == "-h" ]; then
+  if [[ "$1" == "-h" ]]; then
     vpm_help "list"
     return
   fi
@@ -413,7 +413,8 @@ function vpm_list() {
       local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
       local pair=${VPM_PROJECT_LIST[$idx]}
       local len=${#i}
-      local tab=$(printf '%*s' "(5 - $len)" | tr ' ' " ")
+      local n=`expr 5 - $len`
+      local tab=$(printf '%*s' $n | tr ' ' " ")
 
       VPM_DECODE_PROJECT_PAIR "$pair"
 
@@ -425,7 +426,7 @@ function vpm_list() {
 # Edits the local registry.
 function vpm_edit_registry() {
   # Help.
-  if [ "$1" == "-h" ]; then
+  if [[ "$1" == "-h" ]]; then
     vpm_help "manage"
   else
     VPM_EDIT $PATH_REPOSITORY
@@ -438,13 +439,13 @@ function vpm_edit_registry() {
 # @param $1 Project key or index
 function vpm_open() {
   # Help.
-  if [ "$1" == "-h" ]; then
+  if [[ "$1" == "-h" ]]; then
     vpm_help "open"
     return
   fi
 
   # If arg is blank, open root directory of vpm.
-  if [ "$1" == "-r" ]; then
+  if [[ "$1" == "-r" ]]; then
     open $PATH_VPM_ROOT
     echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Opened root in Finder"
     return
@@ -468,14 +469,14 @@ function vpm_open() {
 #           of the current directory.
 function vpm_remove() {
   # Help.
-  if [ "$1" == "-h" ]; then
+  if [[ "$1" == "-h" ]]; then
     vpm_help "remove"
     return
   fi
 
   local key="$1"
 
-  if [ "$key" == "" ] || [ "$key" == "." ]; then
+  if [[ "$key" == "" ]] || [[ "$key" == "." ]]; then
     key="${PWD##*/}"
   fi
 
@@ -533,7 +534,7 @@ function vpm_remove() {
 # @param $2 Project key or index
 function vpm_project() {
   # Help.
-  if [ "$1" == "-h" ]; then
+  if [[ "$1" == "-h" ]]; then
     vpm_help "project"
 
     return
@@ -541,7 +542,7 @@ function vpm_project() {
 
   VPM_GET_PROJECT_PAIR $1
 
-  if [ "$VPM_TMP_PROJECT_ALIAS" != "" ]; then
+  if [[ "$VPM_TMP_PROJECT_ALIAS" != "" ]]; then
     TARGET_PROJECT_FILE=""
 
     for file in "$VPM_TMP_PROJECT_PATH"/*; do
@@ -598,12 +599,12 @@ function vpm_project() {
 # @param [$2] Port
 function vpm_serve() {
   # Help.
-  if [ "$1" == "-h" ]; then
+  if [[ "$1" == "-h" ]]; then
     vpm_help "serve"
     return
   fi
 
-  if [ "$1" == "-r" ]; then
+  if [[ "$1" == "-r" ]]; then
     cd $PATH_VPM_ROOT
     return
   fi
@@ -612,7 +613,7 @@ function vpm_serve() {
 
   local p="$(pwd)"
 
-  if [ "$VPM_TMP_PROJECT_ALIAS" != "" ]; then
+  if [[ "$VPM_TMP_PROJECT_ALIAS" != "" ]]; then
     p=$VPM_TMP_PROJECT_PATH
   fi
 
@@ -664,49 +665,49 @@ function vpm_show_commands() {
 
 # Displays help documents regarding vpm.
 function vpm_help() {
-  if [ "$1" == "" ] || [ "$1" == "-h" ]; then
+  if [[ "$1" == "" ]] || [[ "$1" == "-h" ]]; then
     vpm_help_directory
     return
   fi
 
   echo
 
-  if [ "$1" == "add" ]; then
+  if [[ "$1" == "add" ]]; then
     echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}add <project_alias>${COLOR_RESET}"
     echo
     echo -e "Maps the current working directory to <project_alias> in vpm. If there already exists a project with the same key, its working directory will be replaced."
 
-  elif [ "$1" == "cd" ]; then
+  elif [[ "$1" == "cd" ]]; then
     echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}cd <project_alias_or_index>${COLOR_RESET}"
     echo
     echo -e "Changes the current working directory to that of the specified ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET}."
 
-  elif [ "$1" == "clean" ]; then
+  elif [[ "$1" == "clean" ]]; then
     echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}clean${COLOR_RESET}"
     echo
     echo -e "Scans the current vpm registry and reconsiles invalid project entries."
 
-  elif [ "$1" == "edit" ]; then
+  elif [[ "$1" == "edit" ]]; then
     echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}edit${COLOR_RESET}"
     echo
     echo -e "Edits the vpm registry file directly in the default text editor ${COLOR_PURPLE}(USE WITH CAUTION)${COLOR_RESET}."
 
-  elif [ "$1" == "list" ] || [ "$1" == "ls" ]; then
+  elif [[ "$1" == "list" ]] || [[ "$1" == "ls" ]]; then
     echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}list${COLOR_RESET}"
     echo
     echo -e "Lists all the current projects managed by vpm."
 
-  elif [ "$1" == "project" ]; then
+  elif [[ "$1" == "project" ]]; then
     echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}project <project_alias_or_index>${COLOR_RESET}"
     echo
     echo -e "Opens a vpm project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} in its designated IDE. vpm scans for the following project files in order: Xcode, and Sublime. If no project files associated with the aforementioned applications are found, this command will be ignored."
 
-  elif [ "$1" == "remove" ] || [ "$1" == "rm" ]; then
+  elif [[ "$1" == "remove" ]] || [[ "$1" == "rm" ]]; then
     echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}remove <project_alias_or_index>${COLOR_RESET}"
     echo
     echo -e "Removes a project specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} from the vpm registry."
 
-  elif [ "$1" == "serve" ] || [ "$1" == "srv" ] || [ "$1" == "s"]; then
+  elif [[ "$1" == "serve" ]] || [[ "$1" == "srv" ]] || [[ "$1" == "s" ]]; then
     echo -e "${COLOR_BLUE}vpm: ${COLOR_PURPLE}HELP ${COLOR_BLUE}vpm ${COLOR_CYAN}serve <project_alias_or_index>${COLOR_RESET}"
     echo
     echo -e "Serves a project to localhost specified by ${COLOR_CYAN}<project_alias_or_index>${COLOR_RESET} from the vpm registry."
@@ -719,19 +720,19 @@ function vpm_help() {
 }
 
 # Main process.
-if   [ "$1" == "" ] || [ "$1" == "dir" ] || [ "$1" == "d" ];         then vpm_directory $2
-elif [ "$1" == "add" ] || [ "$1" == "a" ];                           then vpm_add $2
-elif [ "$1" == "cache" ];                                            then vpm_cache $2
-elif [ "$1" == "cd" ];                                               then vpm_cd $2
-elif [ "$1" == "clean" ] || [ "$1" == "c" ];                         then vpm_clean $2
-elif [ "$1" == "help" ] || [ "$1" == "h" ];                          then vpm_help $2
-elif [ "$1" == "list" ] || [ "$1" == "ls" ] || [ "$1" == "l" ];      then vpm_list $2
-elif [ "$1" == "edit" ] || [ "$1" == "e" ];                          then vpm_edit_registry $2
-elif [ "$1" == "open" ] || [ "$1" == "o" ];                          then vpm_open $2
-elif [ "$1" == "remove" ] || [ "$1" == "rm" ] || [ "$1" == "r" ];    then vpm_remove $2
-elif [ "$1" == "project" ] || [ "$1" == "proj" ] || [ "$1" == "p" ]; then vpm_project $2
-elif [ "$1" == "serve" ] || [ "$1" == "srv" ] || [ "$1" == "s" ];    then vpm_serve $2 $3
-elif [ "$1" == "-v" ];                                               then echo -e "v$VPM_VERSION"
+if   [[ "$1" == "" ]] || [[ "$1" == "dir" ]] || [[ "$1" == "d" ]];         then vpm_directory $2
+elif [[ "$1" == "add" ]] || [[ "$1" == "a" ]];                             then vpm_add $2
+elif [[ "$1" == "cache" ]];                                                then vpm_cache $2
+elif [[ "$1" == "cd" ]];                                                   then vpm_cd $2
+elif [[ "$1" == "clean" ]] || [[ "$1" == "c" ]];                           then vpm_clean $2
+elif [[ "$1" == "help" ]] || [[ "$1" == "h" ]];                            then vpm_help $2
+elif [[ "$1" == "list" ]] || [[ "$1" == "ls" ]] || [[ "$1" == "l" ]];      then vpm_list $2
+elif [[ "$1" == "edit" ]] || [[ "$1" == "e" ]];                            then vpm_edit_registry $2
+elif [[ "$1" == "open" ]] || [[ "$1" == "o" ]];                            then vpm_open $2
+elif [[ "$1" == "remove" ]] || [[ "$1" == "rm" ]] || [[ "$1" == "r" ]];    then vpm_remove $2
+elif [[ "$1" == "project" ]] || [[ "$1" == "proj" ]] || [[ "$1" == "p" ]]; then vpm_project $2
+elif [[ "$1" == "serve" ]] || [[ "$1" == "srv" ]] || [[ "$1" == "s" ]];    then vpm_serve $2 $3
+elif [[ "$1" == "-v" ]];                                                   then echo -e "v$VPM_VERSION"
 else echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Unsupported command:" $1
 fi
 
