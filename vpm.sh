@@ -308,7 +308,7 @@ function vpm_add() {
     fi
   done
 
-  if [ $check == 0 ]; then
+  if [[ $check == 0 ]]; then
     buffer="$buffer$key:${dir}\n"
     echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Mapped ${COLOR_CYAN}$key ${COLOR_RESET}to ${COLOR_CYAN}${dir}${COLOR_RESET}"
   else
