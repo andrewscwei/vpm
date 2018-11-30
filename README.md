@@ -18,7 +18,7 @@ From now on you can just run `vpm cd <project_key>` to navigate to that project 
 Install vpm via cURL:
 
 ```sh
-$ curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v2.3.0/install.sh | bash
+$ curl -o- https://raw.githubusercontent.com/andrewscwei/vpm/v2.4.0/install.sh | bash
 ```
 
 ## Commands

@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="2.3.0"
+VPM_VERSION="2.4.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -393,6 +393,16 @@ function vpm_clean() {
   echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Reconciled $count project(s)"
 }
 
+# Downloads all files from a Gist to the working directory individually. This
+# function requires `jq`.
+#
+# @param $1 ID of the gist
+#
+# @see https://stedolan.github.io/jq/
+function vpm_gist() {
+  curl -sS --remote-name-all $(curl -sS https://api.github.com/gists/$1 | jq -r '.files[].raw_url')
+}
+
 # Lists all the projects managed by vpm.
 function vpm_list() {
   # Help.
@@ -725,6 +735,7 @@ elif [[ "$1" == "add" ]] || [[ "$1" == "a" ]];                             then 
 elif [[ "$1" == "cache" ]];                                                then vpm_cache $2
 elif [[ "$1" == "cd" ]];                                                   then vpm_cd $2
 elif [[ "$1" == "clean" ]] || [[ "$1" == "c" ]];                           then vpm_clean $2
+elif [[ "$1" == "gist" ]] || [[ "$1" == "g" ]];                            then vpm_gist $2
 elif [[ "$1" == "help" ]] || [[ "$1" == "h" ]];                            then vpm_help $2
 elif [[ "$1" == "list" ]] || [[ "$1" == "ls" ]] || [[ "$1" == "l" ]];      then vpm_list $2
 elif [[ "$1" == "edit" ]] || [[ "$1" == "e" ]];                            then vpm_edit_registry $2
