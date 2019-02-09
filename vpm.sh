@@ -214,7 +214,7 @@ function VPM_SET_CACHE() {
     VPM_DECODE_PROJECT_PAIR "${VPM_PROJECT_LIST[$idx]}"
 
     if [[ "$VPM_TMP_PROJECT_ALIAS" == "$1" ]]; then
-      echo -e $1 >$PATH_CACHE
+      echo -e $1 >|$PATH_CACHE
       return
     fi
   done
@@ -315,7 +315,7 @@ function vpm_add() {
     echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Remapped ${COLOR_CYAN}$key${COLOR_RESET} to ${COLOR_CYAN}${dir}${COLOR_RESET}"
   fi
 
-  echo -e $buffer >$PATH_REPOSITORY
+  echo -e $buffer >|$PATH_REPOSITORY
 
   VPM_SERIALIZE_REPOSITORY
   VPM_SET_CACHE $key
@@ -389,7 +389,7 @@ function vpm_clean() {
     fi
   done
 
-  echo -e $buffer >$PATH_REPOSITORY
+  echo -e $buffer >|$PATH_REPOSITORY
   echo -e "${COLOR_BLUE}vpm: ${COLOR_GREEN}OK ${COLOR_RESET}Reconciled $count project(s)"
 }
 
@@ -535,7 +535,7 @@ function vpm_remove() {
     fi
   fi
 
-  echo -e $buffer >$PATH_REPOSITORY
+  echo -e $buffer >|$PATH_REPOSITORY
 }
 
 # Opens a project from vpm. Either specify a string representing the project
