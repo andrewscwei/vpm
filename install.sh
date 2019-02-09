@@ -3,7 +3,7 @@
 { # This ensures the entire script is downloaded
 
 # Config.
-VPM_VERSION="2.4.0"
+VPM_VERSION="2.5.0"
 VPM_SOURCE=https://raw.githubusercontent.com/andrewscwei/vpm/v$VPM_VERSION/vpm.sh
 
 # Colors.
