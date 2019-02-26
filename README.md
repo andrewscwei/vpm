@@ -74,7 +74,3 @@ $ vpm p sample-project
 ```
 
 With this set up you can add multiple projects to the `vpm` registry and quickly access all of them. You can do `vpm list` to see the existing projects in the registry and simply access each of them by their key or index. For example, if `sample-project` is the 6th project on the list, you can do `vpm cd 6` instead of `vpm cd sample-project`.
-
-## License
-
-This software is released under the [MIT License](http://opensource.org/licenses/MIT).
