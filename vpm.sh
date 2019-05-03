@@ -9,7 +9,7 @@
 { # This ensures the entire script is downloaded #
 
 # Config.
-VPM_VERSION="2.5.0"
+VPM_VERSION="2.6.0"
 
 # Colors.
 COLOR_PREFIX="\x1b["
@@ -72,19 +72,16 @@ function VPM_SERIALIZE_REPOSITORY() {
 function VPM_DECODE_PROJECT_PAIR() {
   if [[ "$1" == "" ]]; then return; fi
 
-  # Grab the key and path from the "key":"path" string pair.
-  local k=$(echo $1 | cut -d':' -f1)
-  local p=$(echo $1 | cut -d':' -f2)
-
-  # Filter out quotations.
-  k=${k//\"/}
-  k=${k//\'/}
-  p=${p//\"/}
-  p=${p//\'/}
-
-  # Store the key and path globally.
-  VPM_TMP_PROJECT_ALIAS="$k"
-  VPM_TMP_PROJECT_PATH="$p"
+  # Store the key and path globally. Account for 1-base arrays in ZSH.
+  if [ -n "$ZSH_VERSION" ]; then
+    local arr=("${(@s/:/)1}")
+    VPM_TMP_PROJECT_ALIAS="${arr[1]}"
+    VPM_TMP_PROJECT_PATH="${arr[2]}"
+  else
+    local arr=(${1//\:/ })
+    VPM_TMP_PROJECT_ALIAS="${arr[0]}"
+    VPM_TMP_PROJECT_PATH="${arr[1]}"
+  fi
 }
 
 # @global
@@ -414,23 +411,29 @@ function vpm_list() {
   # Update VPM_PROJECT_LIST array.
   VPM_SERIALIZE_REPOSITORY
 
+  local output=""
+
   if (($VPM_PROJECT_LENGTH == 0)); then
-    echo -e "${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}There are no projects in the registry."
+    output="${output}${COLOR_BLUE}vpm: ${COLOR_RED}ERR! ${COLOR_RESET}There are no projects in the registry."
   else
-    echo -e "${COLOR_BLUE}vpm: ${COLOR_RESET}Found ${COLOR_PURPLE}$VPM_PROJECT_LENGTH${COLOR_RESET} project(s) in the registry"
+    output="${output}${COLOR_BLUE}vpm: ${COLOR_RESET}Found ${COLOR_PURPLE}$VPM_PROJECT_LENGTH${COLOR_RESET} project(s) in the registry"
+    output="${output}\n\n"
 
     for ((i = 1; i <= $VPM_PROJECT_LENGTH; i++)); do
       local idx=$([ -n "$ZSH_VERSION" ] && echo "$i" || echo "$((i-1))")
       local pair=${VPM_PROJECT_LIST[$idx]}
-      local len=${#i}
-      local n=`expr 5 - $len`
-      local tab=$(printf '%*s' $n | tr ' ' " ")
 
       VPM_DECODE_PROJECT_PAIR "$pair"
 
-      echo -e "$tab$i. ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}: $VPM_TMP_PROJECT_PATH"
+      output="${output}$i. ${COLOR_CYAN}$VPM_TMP_PROJECT_ALIAS${COLOR_RESET}: $VPM_TMP_PROJECT_PATH"
+
+      if (($idx != $VPM_PROJECT_LENGTH)); then
+        output="${output}\n"
+      fi
     done
   fi
+
+  echo -e $output
 }
 
 # Edits the local registry.
