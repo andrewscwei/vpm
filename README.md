@@ -1,3 +1,5 @@
+> This project is now deprecated and migrated to https://github.com/andrewscwei/mu.
+
 # VARS Project Manager (vpm)
 
 > Switch between projects quickly in the command line
